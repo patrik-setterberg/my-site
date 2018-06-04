@@ -10,9 +10,9 @@
     <body>
         <div>
             My_site:
-            <a href="/index">Home</a>
-            <a href="/#">Portfolio</a>
-            <a href="/#">Blog</a>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('#') }}">Portfolio</a>
+            <a href="{{ url_for('#') }}">Blog</a>
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}
