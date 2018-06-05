@@ -2,9 +2,9 @@
 <html>
     <head>
         {% if title %}
-        <title>{{ title }} - My_site</title>
+        <title>{{ title }} - my_site</title>
         {% else %}
-        <title>Welcome to My_site!</title>
+        <title>Welcome to my_site!</title>
         {% endif %}
     </head>
     <body>
@@ -14,6 +14,10 @@
             <a href="{{ url_for('index') }}">Portfolio</a>
             <a href="{{ url_for('index') }}">Blog</a>
             {% if current_user.is_authenticated %}
+            | Admin tools:&nbsp;
+            <a href="{{ url_for('admin') }}">Edit Home Page</a>
+            <a href="{{ url_for('admin') }}">Edit Portfolio</a>
+            <a href="{{ url_for('new_blog_post') }}">Manage Blog</a>
             <a href="{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>

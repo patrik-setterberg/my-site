@@ -1,6 +1,6 @@
-from app import app
-from app.forms import LoginForm
-from app.models import User
+from app import app, db
+from app.forms import LoginForm, PostForm
+from app.models import User, BlogPost
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
@@ -70,3 +70,24 @@ def logout():
 @login_required
 def admin():
     return render_template('admin.html', title="Secret Area")
+
+
+# new blog post (rename to manage blog)
+@app.route('/new_blog_post', methods=['GET', 'POST'])
+@login_required
+def new_blog_post():
+
+    form = PostForm()
+
+    if form.validate_on_submit():
+
+        post = BlogPost(title=form.post_title.data, body=form.post_body.data)
+
+        db.session.add(post)
+        db.session.commit()
+
+        flash('Post is now live!')
+        return redirect(url_for('admin'))
+
+    return render_template('new_blog_post.html', title='New Blog Post',
+                           form=form)

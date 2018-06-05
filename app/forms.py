@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Length, Email
+
 
 # admin login
 class LoginForm(FlaskForm):
@@ -8,3 +9,24 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Sign in')
     # SKIPPAR REMEMBER ME Så jag vet
+
+
+# Blog post
+class PostForm(FlaskForm):
+    post_title = TextAreaField('Post title', validators=[
+        DataRequired(), Length(min=1, max=100)])
+    post_body = TextAreaField('Post body', validators=[
+        DataRequired(), Length(min=1, max=1000)])
+    submit = SubmitField('Submit')
+
+
+# Comment post
+class PostComment(FlaskForm):
+    comment_author = TextAreaField('Your Name', validators=[
+        DataRequired(), Length(min=1, max=100)])
+    comment_email = TextAreaField('Your email', validators=[
+        DataRequired(), Email()])
+    comment_body = TextAreaField('Comment', validators=[
+        DataRequired(), Length(min=1, max=1000)])
+    submit = SubmitField('Submit')
+    # captcha ???
