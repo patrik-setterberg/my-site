@@ -1,30 +1,33 @@
 from app import app, db
-from app.forms import LoginForm, PostForm
-from app.models import User, BlogPost
+from app.forms import LoginForm, BlogPostForm, BlogCommentForm
+from app.models import User, BlogPost, BlogComment
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 
-
-@app.route('/') # change '/' to actual home WHEN exists(actual home)
+@app.route('/')  # change '/' to actual home WHEN exists(actual home)
 @app.route('/blog')
 def index():
 
-    user = {'username': 'admin'}
+    form = BlogCommentForm()
 
-    posts = [
-        {
-            'author': {'username': 'Kvarjo'},
-            'body': 'Riktigt najs idag'
-        },
-        {
-            'author': {'username': 'Admin'},
-            'body': 'jag håller med @Kvarjo'
-        }
+    if form.validate_on_submit():
 
-    ]
-    return render_template('index.html', title='Home', user=user, posts=posts)
+        comment = BlogComment(author=form.comment_author.data,
+            body=form.comment_body.data, email=form.comment_email.data)
+
+        db.session.add(comment)
+        db.session.commit()
+
+        flash('Your comment has been submitted. Thank you!')
+        return redirect(url_for('/blog'))
+
+    posts = BlogPost.query.all()
+    comments = BlogComment.query.all()
+
+    return render_template('index.html', title='Home', posts=posts, form=form,
+        comments=comments)
 
 
 # login route
@@ -69,7 +72,7 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
-    return render_template('admin.html', title="Secret Area")
+    return render_template('admin.html', title='Secret Area')
 
 
 # new blog post (rename to manage blog)
@@ -77,7 +80,7 @@ def admin():
 @login_required
 def new_blog_post():
 
-    form = PostForm()
+    form = BlogPostForm()
 
     if form.validate_on_submit():
 

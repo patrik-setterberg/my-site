@@ -13,7 +13,7 @@
         </p>
         <p>
             {{ form.post_body.label }}<br>
-            {{ form.post_body(cols=60, rows=4) }}<br>
+            {{ form.post_body(cols=60, rows=6) }}<br>
             {% for error in form.post_body.errors %}
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}

@@ -40,9 +40,11 @@ class BlogPost(db.Model):
 
 class BlogComment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    author = db.Column(db.String(64))
     body = db.Column(db.String(500))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     post_id = db.Column(db.Integer, db.ForeignKey('blog_post.id'))
+    email = db.Column(db.String(120), index=True)
 
     def __repr__(self):
         return '<comment {}>'.format(self.body)
