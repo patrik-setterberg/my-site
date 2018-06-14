@@ -11,6 +11,9 @@ class Config(object):
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # settings for pagination of blog posts
+    POSTS_PER_PAGE = 3
+
     # e-mail server details
     # MAIL_SERVER = os.environ.get('MAIL_SERVER')
     # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)

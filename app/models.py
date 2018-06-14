@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
 # help Flask-Login talk to database (get id for user)
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id)) # id is str so needs typecasting to int
+    return User.query.get(int(id))  # id is str so needs typecasting to int
 
 
 class BlogPost(db.Model):

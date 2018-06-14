@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms import HiddenField
+from wtforms import HiddenField, TextField
 from wtforms.validators import DataRequired, Length, Email
 
 
@@ -23,11 +23,12 @@ class BlogPostForm(FlaskForm):
 
 # Comment post
 class BlogCommentForm(FlaskForm):
-    comment_author = TextAreaField('Your Name', validators=[
+    comment_author = TextField('Your Name', validators=[
         DataRequired(), Length(min=1, max=100)])
-    comment_email = TextAreaField('Your email', validators=[Email()])
+    comment_email = TextField('Your email', validators=[Email()])
     comment_body = TextAreaField('Comment', validators=[
         DataRequired(), Length(min=1, max=1000)])
-    submit = SubmitField('Submit')
     post_id = HiddenField('', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
     # captcha ???

@@ -2,21 +2,15 @@
 
 {% block content %}
     {% for post in posts %}
-    <div>
-        <h2>{{ post.title }}</h2>
-        <p>Posted {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-        <p>{{ post.body }}</p>
-        <div>
-            <h3>Comments</h3>
-            {% if comments %}
-            {% for comment in comments %}
-            <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-            <p>{{ comment.body }}</p>
-            {% endfor %}
-            {% else %}
-            <p>No comments yet.</p>
-            {% endif %}
-        </div>
-    </div>
+    {% include '_blogpost.html' %}
+    <hr>
     {% endfor %}
+
+    {% if prev_url %}
+    <a href="{{ prev_url }}">Newer posts</a>
+    {% endif %}
+
+    {% if next_url %}
+    <a href="{{ next_url }}">Older posts</a>
+    {% endif %}
 {% endblock %}
