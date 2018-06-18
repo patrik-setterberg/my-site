@@ -1,13 +1,13 @@
-<table>
-    <tr valign="top">
+<table class="table table-hover">
+    <tr>
         <td>
             <div>
                 <h2>{{ post.title }}</h2>
                 <p>Posted {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
                 <p>{{ post.body }}</p>
-                <div>
-                    {% include '_comment.html' %}
-                </div>
+            </div>
+            <div>
+                {% include '_comment.html' %}
             </div>
         </td>
     </tr>
