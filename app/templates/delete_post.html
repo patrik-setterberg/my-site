@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <table class="table table-hover">
+        <tr>
+            <td>
+                <div>
+                    <h3>{{ post.title }}</h3>
+                    <p><i>Posted:</i> {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.<br>
+                    <i>Last edit:</i> LAST_EDIT_TIMESTAMP</p>
+                    <hr>
+                    <p>{{ post.body }}</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-hover">
+        <tr>
+            <td>
+                <h3>Delete post</h3>
+                <p>Do you wish to delete this post?</p>
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    {{ wtf.form_errors(form, hiddens="only") }}
+                    {{ wtf.form_field(form.del_field) }}
+                    {{ wtf.form_field(form.submit) }}
+                </form>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

@@ -1,34 +1,41 @@
 <hr>
-<h4>Comments</h4>
+<p class="load_comments">Load comments</p>
 
-{% if comments %}
+<div class="comments">
+    {% if comments %}
 
-{% for comment in comments %}
-<p>{{ comment.post_id }} - {{ post.id }}</p>
-<p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-<p>{{ comment.body }}</p>
-{% endfor %}
+    {% for comment in comments %}
+    <p>{{ comment.post_id }} - {{ post.id }}</p>
+    <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
+    <p>{{ comment.body }}</p>
+    {% endfor %}
 
-{% else %}
-<p>No comments yet.</p>
-{% endif %}
+    {% else %}
+    <p>No comments yet.</p>
+    {% endif %}
 
-<div class="row">
-    <div class="col-md-6">
-        <p style="font-weight:bold;">Post a comment:</p>
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            {{ wtf.form_errors(form, hiddens="only") }}
-            {{ form.post_id(value=post.id) }}
+    <div class="row">
+        <div class="col-md-6">
+            <p style="font-weight:bold;">Post a comment:</p>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                {{ wtf.form_errors(form, hiddens="only") }}
+                {{ form.post_id(value=post.id) }}
 
-            {{ wtf.form_field(form.comment_author) }}
-            {{ wtf.form_field(form.comment_email) }}
-            <p>
-                Note: email is optional, will remain hidden and only be used to send you a notification of a reply to your comment.
-            </p>
+                {{ wtf.form_field(form.comment_author) }}
+                {{ wtf.form_field(form.comment_email) }}
+                <p>
+                    Note: email is optional, will remain hidden and only be used to send you a notification of a reply to your comment.
+                </p>
 
-            {{ wtf.form_field(form.comment_body) }}
-            {{ wtf.form_field(form.submit) }}
-        </form>
+                {{ wtf.form_field(form.comment_body) }}
+                {{ wtf.form_field(form.submit) }}
+            </form>
+        </div>
     </div>
+
+    <p style="padding-top:10px" class="hide_comments">Hide comments</p>
 </div>
+
+
+

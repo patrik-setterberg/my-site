@@ -8,6 +8,26 @@
     {% endif %}
 {% endblock %}
 
+{% block scripts %}
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $('.comments').addClass('hide');
+
+        var load_comments = $('.load_comments'),
+            hide_comments = $('.hide_comments');
+
+        load_comments.click(function() {
+            $(this).hide().next('div').toggleClass('hide');
+        });
+
+        hide_comments.click(function() {
+            $(this).parent().toggleClass('hide');
+            $(this).parent().prev().show();
+            });
+    </script>
+{% endblock %}
+
 {% block navbar %}
     <nav class="navbar navbar-default">
         <div class="container">
@@ -28,11 +48,11 @@
                 </ul>
 
                 {# ADMIN TOOLS #}
+                {% if current_user.is_authenticated %}
                 <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_authenticated %}
                     <li><a href="{{ url_for('admin') }}">Edit Home Page</a></li>
                     <li><a href="{{ url_for('admin') }}">Edit Portfolio</a></li>
-                    <li><a href="{{ url_for('new_blog_post') }}">Manage Blog</a></li>
+                    <li><a href="{{ url_for('manage_blog') }}">Manage Blog</a></li>
                     <li><a href="{{ url_for('logout') }}">Logout</a></li>
                     {% endif %}
                 </ul>

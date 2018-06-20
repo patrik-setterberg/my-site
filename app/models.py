@@ -32,7 +32,8 @@ class BlogPost(db.Model):
     body = db.Column(db.String(1000))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     comments = db.relationship('BlogComment', backref='blog_post',
-        lazy='dynamic')
+                               lazy='dynamic')
+    last_edit = db.Column(db.DateTime, index=True)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)

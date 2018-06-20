@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <h2>Post a new blog post!</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                {{ wtf.form_errors(form, hiddens="only") }}
+
+                {{ wtf.form_field(form.post_title) }}
+                {{ wtf.form_field(form.post_body) }}
+                {{ wtf.form_field(form.submit) }}
+            </form>
+        </div>
+    </div>
+    <hr>
+
+    <h2>Edit or delete posts!</h2>
+
+    <table class="table table-hover">
+        {% for post in posts %}
+        <tr>
+            <td>
+                <p><b>{{ post.title }}</b></p>
+            </td>
+            <td>
+                <p style="text-align:right;">
+                    {% if post.last_edit %}
+                    Last edit:
+                    {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}. -
+                    {% endif %}
+                    <a href="{{ url_for('edit_blog_post', post_id=post.id) }}">Edit post</a> |
+                    <a href="{{ url_for('delete_post', post_id=post.id) }}">Delete Post</a>
+                </p>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer posts
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older posts <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+{% endblock %}

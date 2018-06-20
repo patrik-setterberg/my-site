@@ -1,6 +1,7 @@
 from app import app, db
-from app.forms import LoginForm, BlogPostForm, BlogCommentForm
+from app.forms import LoginForm, BlogPostForm, BlogCommentForm, DeletePostForm
 from app.models import User, BlogPost, BlogComment
+from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
@@ -16,8 +17,8 @@ def index():
     if form.validate_on_submit():
 
         comment = BlogComment(author=form.comment_author.data,
-            body=form.comment_body.data, email=form.comment_email.data,
-                post_id=form.post_id.data)
+                              body=form.comment_body.data, email=form.
+                              comment_email.data, post_id=form.post_id.data)
 
         db.session.add(comment)
         db.session.commit()
@@ -38,7 +39,8 @@ def index():
     comments = BlogComment.query.all()
 
     return render_template('index.html', title='Home', posts=posts.items,
-        next_url=next_url, prev_url=prev_url, form=form, comments=comments)
+                           next_url=next_url, prev_url=prev_url, form=form,
+                           comments=comments)
 
 
 # login route
@@ -86,10 +88,10 @@ def admin():
     return render_template('admin.html', title='Secret Area')
 
 
-# new blog post (rename to manage blog)
-@app.route('/new_blog_post', methods=['GET', 'POST'])
+# manage blog
+@app.route('/manage_blog', methods=['GET', 'POST'])
 @login_required
-def new_blog_post():
+def manage_blog():
 
     form = BlogPostForm()
 
@@ -103,5 +105,56 @@ def new_blog_post():
         flash('Post is now live!')
         return redirect(url_for('index'))
 
-    return render_template('new_blog_post.html', title='New Blog Post',
-                           form=form)
+    page = request.args.get('page', 1, type=int)
+    posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
+        page, app.config['TITLES_PER_PAGE'], False)
+    next_url = url_for('manage_blog', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('manage_blog', page=posts.prev_num) \
+        if posts.has_prev else None
+
+    return render_template('manage_blog.html', title='Manage Blog',
+                           form=form, posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
+
+
+# edit blog post
+@app.route('/edit_blog_post/<post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_blog_post(post_id):
+
+    form = BlogPostForm()
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+
+    if form.validate_on_submit():
+        post.title = form.post_title.data
+        post.body = form.post_body.data
+        post.last_edit = datetime.utcnow()
+        db.session.commit()
+
+        flash('Changes saved.')
+        return redirect(url_for('manage_blog'))
+
+    elif request.method == 'GET':
+        form.post_title.data = post.title
+        form.post_body.data = post.body
+
+    return render_template('edit_blog_post.html', form=form, post=post)
+
+
+# delete blog post
+@app.route('/delete_post/<post_id>', methods=['GET', 'POST'])
+@login_required
+def delete_post(post_id):
+
+    form = DeletePostForm()
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+
+    if form.validate_on_submit():
+        db.session.delete(post)
+        db.session.commit()
+
+        flash('Post deleted successfully.')
+        return redirect(url_for('manage_blog'))
+
+    return render_template('delete_post.html', form=form, post=post)
