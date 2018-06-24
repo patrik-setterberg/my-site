@@ -39,5 +39,5 @@ class DeletePostForm(FlaskForm):
     submit = SubmitField('Delete Post')
 
     def validate_del_field(FlaskForm, field):
-        if field.data.lower() != 'delete':
+        if field.data != 'DELETE':
             raise ValidationError('Please confirm deletion. Properly.')

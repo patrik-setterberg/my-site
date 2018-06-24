@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+    <div id="post">
+        <h2>{{ post.title }}</h2>
+        <p>
+            Posted:
+            {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} <b>UTC</b>
+            {% if post.last_edit %}
+            - Edited: {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
+            {% endif %}
+        </p>
+        <p style="white-space: pre-wrap;">{{ post.body }}</p>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <p style="font-weight:bold;">Post a comment:</p>
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                {{ wtf.form_errors(form, hiddens="only") }}
+
+                {{ wtf.form_field(form.post_id)}}
+                {{ wtf.form_field(form.comment_author) }}
+                {{ wtf.form_field(form.comment_email) }}
+                <p>
+                    Note: email will remain hidden and will only be used to send you a notification of a reply to your comment.
+                </p>
+
+                {{ wtf.form_field(form.comment_body) }}
+                {{ wtf.form_field(form.submit) }}
+            </form>
+        </div>
+    </div>
+    <hr>
+    <div id="comments">
+        {% if comments %}
+
+            {% for comment in comments %}
+                <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
+                <p style="white-space: pre-wrap;">{{ comment.body }}</p>
+            {% endfor %}
+
+        {% else %}
+            <p>No comments yet.</p> {# DOESN'T WORK AT THE MO #}
+        {% endif %}
+    </div>
+
+{% endblock %}

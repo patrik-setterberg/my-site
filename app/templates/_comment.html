@@ -2,37 +2,19 @@
 <p class="load_comments">Load comments</p>
 
 <div class="comments">
+    <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
     {% if comments %}
 
     {% for comment in comments %}
-    <p>{{ comment.post_id }} - {{ post.id }}</p>
-    <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-    <p>{{ comment.body }}</p>
+        {% if comment.post_id == post.id %}
+            <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
+            <p style="white-space: pre-wrap;">{{ comment.body }}</p>
+        {% endif %}
     {% endfor %}
 
     {% else %}
-    <p>No comments yet.</p>
+        <p>No comments yet.</p> {# DOESN'T WORK AT THE MO #}
     {% endif %}
-
-    <div class="row">
-        <div class="col-md-6">
-            <p style="font-weight:bold;">Post a comment:</p>
-            <form action="" method="post">
-                {{ form.hidden_tag() }}
-                {{ wtf.form_errors(form, hiddens="only") }}
-                {{ form.post_id(value=post.id) }}
-
-                {{ wtf.form_field(form.comment_author) }}
-                {{ wtf.form_field(form.comment_email) }}
-                <p>
-                    Note: email is optional, will remain hidden and only be used to send you a notification of a reply to your comment.
-                </p>
-
-                {{ wtf.form_field(form.comment_body) }}
-                {{ wtf.form_field(form.submit) }}
-            </form>
-        </div>
-    </div>
 
     <p style="padding-top:10px" class="hide_comments">Hide comments</p>
 </div>

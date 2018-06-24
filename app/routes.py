@@ -11,21 +11,6 @@ from werkzeug.urls import url_parse
 @app.route('/blog', methods=['GET', 'POST'])
 def index():
 
-    form = BlogCommentForm()
-
-    # POST
-    if form.validate_on_submit():
-
-        comment = BlogComment(author=form.comment_author.data,
-                              body=form.comment_body.data, email=form.
-                              comment_email.data, post_id=form.post_id.data)
-
-        db.session.add(comment)
-        db.session.commit()
-
-        flash('Your comment has been submitted. Thank you!')
-        return redirect(url_for('index'))
-
     # GET
     # retrieve posts and comments from database
     page = request.args.get('page', 1, type=int)
@@ -39,7 +24,36 @@ def index():
     comments = BlogComment.query.all()
 
     return render_template('index.html', title='Home', posts=posts.items,
-                           next_url=next_url, prev_url=prev_url, form=form,
+                           next_url=next_url, prev_url=prev_url,
+                           comments=comments)
+
+
+# post page
+@app.route('/blog/post/<post_id>', methods=['GET', 'POST'])
+def post(post_id):
+
+    form = BlogCommentForm()
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+    comments = BlogComment.query.filter_by(post_id=int(post_id)).all()
+
+    # POST
+    if form.validate_on_submit():
+
+        comment = BlogComment(author=form.comment_author.data,
+                              body=form.comment_body.data,
+                              email=form.comment_email.data,
+                              post_id=int(form.post_id.data))
+
+        db.session.add(comment)
+        db.session.commit()
+
+        flash('Your comment has been submitted. Thank you!')
+        return redirect(url_for('post', post_id=post.id))
+
+    elif request.method == 'GET':
+        form.post_id.data = post.id
+
+    return render_template('post.html', form=form, post=post,
                            comments=comments)
 
 
@@ -89,7 +103,7 @@ def admin():
 
 
 # manage blog
-@app.route('/manage_blog', methods=['GET', 'POST'])
+@app.route('/admin/manage_blog', methods=['GET', 'POST'])
 @login_required
 def manage_blog():
 
@@ -119,7 +133,7 @@ def manage_blog():
 
 
 # edit blog post
-@app.route('/edit_blog_post/<post_id>', methods=['GET', 'POST'])
+@app.route('/admin/edit_blog_post/<post_id>', methods=['GET', 'POST'])
 @login_required
 def edit_blog_post(post_id):
 
@@ -143,7 +157,7 @@ def edit_blog_post(post_id):
 
 
 # delete blog post
-@app.route('/delete_post/<post_id>', methods=['GET', 'POST'])
+@app.route('/admin/delete_post/<post_id>', methods=['GET', 'POST'])
 @login_required
 def delete_post(post_id):
 
@@ -158,3 +172,29 @@ def delete_post(post_id):
         return redirect(url_for('manage_blog'))
 
     return render_template('delete_post.html', form=form, post=post)
+
+
+# manage (delete) blog comments
+@app.route('/admin/manage_comments/<post_id>', methods=['GET', 'POST'])
+@login_required
+def manage_comments(post_id):
+
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+    comments = BlogComment.query.filter_by(post_id=int(post_id)).all()
+
+    return render_template('manage_comments.html', post=post,
+                           comments=comments)
+
+
+# delete and redirect back to manage comments
+@app.route('/admin/delete_comment/<post_id>/<comment_id>',
+           methods=['GET', 'POST'])
+@login_required
+def delete_comment(comment_id, post_id):
+
+    comment = BlogComment.query.filter_by(id=int(comment_id)).first_or_404()
+
+    db.session.delete(comment)
+    db.session.commit()
+
+    return redirect(url_for('manage_comments', post_id=post_id))

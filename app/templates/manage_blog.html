@@ -2,7 +2,7 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h2>Post a new blog post!</h2>
+    <h3>Publish a new blog post!</h3>
     <div class="row">
         <div class="col-md-6">
             <form action="" method="post">
@@ -17,7 +17,7 @@
     </div>
     <hr>
 
-    <h2>Edit or delete posts!</h2>
+    <h3>Manage posts</h3>
 
     <table class="table table-hover">
         {% for post in posts %}
@@ -29,10 +29,10 @@
                 <p style="text-align:right;">
                     {% if post.last_edit %}
                     Last edit:
-                    {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}. -
+                    {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }} -
                     {% endif %}
                     <a href="{{ url_for('edit_blog_post', post_id=post.id) }}">Edit post</a> |
-                    <a href="{{ url_for('delete_post', post_id=post.id) }}">Delete Post</a>
+                    <a href="{{ url_for('delete_post', post_id=post.id) }}">Delete Post</a> | <a href="{{ url_for('manage_comments', post_id=post.id) }}">Manage comments</a>
                 </p>
             </td>
         </tr>
