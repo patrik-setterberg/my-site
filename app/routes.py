@@ -11,7 +11,6 @@ from werkzeug.urls import url_parse
 @app.route('/blog', methods=['GET', 'POST'])
 def index():
 
-    # GET
     # retrieve posts and comments from database
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
@@ -21,7 +20,7 @@ def index():
     prev_url = url_for('index', page=posts.prev_num) \
         if posts.has_prev else None
 
-    comments = BlogComment.query.all()
+    comments = BlogComment.query.all()  # not particularly elegant
 
     return render_template('index.html', title='Home', posts=posts.items,
                            next_url=next_url, prev_url=prev_url,
@@ -111,7 +110,8 @@ def manage_blog():
 
     if form.validate_on_submit():
 
-        post = BlogPost(title=form.post_title.data, body=form.post_body.data)
+        post = BlogPost(title=form.post_title.data,
+                        body=form.post_body.data)
 
         db.session.add(post)
         db.session.commit()
@@ -163,9 +163,11 @@ def delete_post(post_id):
 
     form = DeletePostForm()
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+    comments = BlogComment.query.filter_by(post_id=int(post_id)).all()
 
     if form.validate_on_submit():
         db.session.delete(post)
+        db.session.delete(comments)
         db.session.commit()
 
         flash('Post deleted successfully.')
@@ -180,10 +182,21 @@ def delete_post(post_id):
 def manage_comments(post_id):
 
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
-    comments = BlogComment.query.filter_by(post_id=int(post_id)).all()
+    page = request.args.get('page', 1, type=int)
+    comments = (BlogComment.query.filter_by(post_id=int(post_id)).order_by(
+                BlogComment.timestamp.desc()).paginate(
+                page, app.config['COMMENTS_PER_PAGE'], False))
+
+    next_url = url_for('manage_comments', post_id=post_id,
+                       page=comments.next_num) \
+        if comments.has_next else None
+    prev_url = url_for('manage_comments', post_id=post_id,
+                       page=comments.prev_num) \
+        if comments.has_prev else None
 
     return render_template('manage_comments.html', post=post,
-                           comments=comments)
+                           comments=comments.items, next_url=next_url,
+                           prev_url=prev_url)
 
 
 # delete and redirect back to manage comments

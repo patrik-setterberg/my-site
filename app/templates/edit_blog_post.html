@@ -2,8 +2,10 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h3>Edit post data and hit save changes.</h3>
-    <div class="row">
+<div class="row">
+    <h3>{% raw %}{ admin.edit_blog_post }{% endraw %}</h3>
+    <hr>
+    <h4>Edit post data and hit save changes.</h4>
         <div class="col-md-6">
             <form action="" method="post">
                 {{ form.hidden_tag() }}
@@ -14,5 +16,5 @@
                 {{ wtf.form_field(form.submit) }}
             </form>
         </div>
-    </div>
+</div>
 {% endblock %}

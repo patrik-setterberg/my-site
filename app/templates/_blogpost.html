@@ -1,20 +1,22 @@
-<table class="table table-hover">
-    <tr>
-        <td>
-            <div>
-                <h2>{{ post.title }}</h2>
-                <p>
-                    Posted:
-                    {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} <b>UTC</b>
-                    {% if post.last_edit %}
-                    - Edited: {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
-                    {% endif %}
-                </p>
-                <p style="white-space: pre-wrap;">{{ post.body }}</p>
-            </div>
-            <div>
-                {% include '_comment.html' %}
-            </div>
-        </td>
-    </tr>
-</table>
+<div class="row">
+    <table class="table table-hover">
+        <tr>
+            <td>
+                <div>
+                    <h3>{{ post.title }}</h3>
+                    <p>
+                        Posted
+                        {{ post.timestamp.strftime("%Y-%m-%d") }}
+                        {% if post.last_edit %}
+                        - Edited: {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
+                        {% endif %}
+                    </p>
+                    <p style="white-space: pre-wrap;">{{ post.body }}</p>
+                </div>
+                <div>
+                    {% include '_comment.html' %}
+                </div>
+            </td>
+        </tr>
+    </table>
+</div>

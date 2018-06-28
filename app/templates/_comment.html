@@ -1,23 +1,23 @@
 <hr>
-<p class="load_comments">Load comments</p>
-
+<p class="load_comments" style="cursor: pointer;">Load comments</p>
 <div class="comments">
     <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
+    <h4>Comments</h4>
     {% if comments %}
-
-    {% for comment in comments %}
-        {% if comment.post_id == post.id %}
-            <p><i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-            <p style="white-space: pre-wrap;">{{ comment.body }}</p>
-        {% endif %}
-    {% endfor %}
-
+        {% for comment in comments %}
+            {% if comment.post_id == post.id %}
+                <p>
+                    <i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC
+                </p>
+                <p style="white-space: pre-wrap;">{{ comment.body }}</p>
+                <hr>
+            {% endif %}
+        {% endfor %}
     {% else %}
         <p>No comments yet.</p> {# DOESN'T WORK AT THE MO #}
     {% endif %}
 
-    <p style="padding-top:10px" class="hide_comments">Hide comments</p>
+    <p class="hide_comments" style="padding-top:10px; cursor:pointer;">Hide comments</p>
 </div>
-
 
 

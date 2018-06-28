@@ -15,6 +15,7 @@ class Config(object):
     # settings for pagination of blog posts
     POSTS_PER_PAGE = 5
     TITLES_PER_PAGE = 10
+    COMMENTS_PER_PAGE = 2
 
     # e-mail server details
     # MAIL_SERVER = os.environ.get('MAIL_SERVER')

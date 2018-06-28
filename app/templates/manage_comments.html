@@ -2,22 +2,41 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-
-    <h3>{{ post.title }}</h3>
+<div class="row">
+    <h3>{% raw %}{ admin.manage_comments }{% endraw %}</h3>
+    <hr>
+    <h4>{{ post.title }}</h4>
 
     <table class="table table-hover">
         {% for comment in comments %}
         <tr>
             <td>
-                <p>{{ comment.body }}</p>
+                <p style="white-space: pre-wrap;">{{ comment.body }}</p>
             </td>
             <td>
                 <p style="text-align:right;">
-
                     <a href="{{ url_for('delete_comment', post_id=post.id, comment_id=comment.id) }}">Delete comment</a>
                 </p>
             </td>
         </tr>
         {% endfor %}
     </table>
+</div>
+
+<div class="row">
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&laquo;</span> Newer
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 {% endblock %}
