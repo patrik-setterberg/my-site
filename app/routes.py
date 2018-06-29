@@ -1,6 +1,7 @@
 from app import app, db
 from app.forms import LoginForm, BlogPostForm, BlogCommentForm, DeletePostForm
-from app.models import User, BlogPost, BlogComment
+from app.forms import AddCategoryForm
+from app.models import User, BlogPost, BlogComment, BlogCategory
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -107,17 +108,32 @@ def admin():
 def manage_blog():
 
     form = BlogPostForm()
+    form.category.choices = ([(cat.category, cat.category) for cat in
+                             BlogCategory.query.all()])
 
-    if form.validate_on_submit():
+    add_cat = AddCategoryForm()
+
+    # post new comment
+    if form.validate_on_submit() and form.submit.data:
 
         post = BlogPost(title=form.post_title.data,
-                        body=form.post_body.data)
+                        body=form.post_body.data,
+                        category=form.category.data)
 
         db.session.add(post)
         db.session.commit()
 
         flash('Post is now live!')
         return redirect(url_for('index'))
+
+    # add new category
+    elif add_cat.validate_on_submit() and add_cat.submit.data:
+        new_cat = BlogCategory(category=add_cat.category.data)
+
+        db.session.add(new_cat)
+        db.session.commit()
+
+        return redirect(url_for('manage_blog'))
 
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
@@ -128,8 +144,8 @@ def manage_blog():
         if posts.has_prev else None
 
     return render_template('manage_blog.html', title='Manage Blog',
-                           form=form, posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           form=form, posts=posts.items, add_cat=add_cat,
+                           next_url=next_url, prev_url=prev_url)
 
 
 # edit blog post
@@ -138,22 +154,44 @@ def manage_blog():
 def edit_blog_post(post_id):
 
     form = BlogPostForm()
+    form.category.choices = ([(cat.category, cat.category) for cat in
+                             BlogCategory.query.all()])
+
+    add_cat = AddCategoryForm()
+
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
 
-    if form.validate_on_submit():
+    # update post data
+    if form.validate_on_submit() and form.submit.data:
+
         post.title = form.post_title.data
         post.body = form.post_body.data
         post.last_edit = datetime.utcnow()
+        post.category = form.category.data
         db.session.commit()
 
         flash('Changes saved.')
         return redirect(url_for('manage_blog'))
 
+    # add new category
+    elif add_cat.validate_on_submit() and add_cat.submit.data:
+
+        new_cat = BlogCategory(category=add_cat.category.data)
+
+        db.session.add(new_cat)
+        db.session.commit()
+
+        flash('Category added.')
+        return redirect(url_for('edit_blog_post', form=form,
+                        add_cat=add_cat, post=post, post_id=post_id))
+
     elif request.method == 'GET':
         form.post_title.data = post.title
         form.post_body.data = post.body
+        form.category.data = post.category
 
-    return render_template('edit_blog_post.html', form=form, post=post)
+    return render_template('edit_blog_post.html', form=form,
+                           add_cat=add_cat, post=post)
 
 
 # delete blog post

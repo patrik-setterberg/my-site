@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
-from wtforms import TextField, HiddenField, ValidationError
+from wtforms import TextField, HiddenField, SelectField
+from wtforms import ValidationError
 from wtforms.validators import DataRequired, InputRequired, Length, Email
 
 
@@ -17,7 +18,14 @@ class BlogPostForm(FlaskForm):
         DataRequired(), Length(min=1, max=100)])
     post_body = TextAreaField('Post body', validators=[
         DataRequired(), Length(min=1, max=1000)])
-    submit = SubmitField('Submit')
+    category = SelectField('Category')
+    submit = SubmitField('Submit post')
+
+
+# Add new blog tags
+class AddCategoryForm(FlaskForm):
+    category = TextField('Add category', validators=[DataRequired()])
+    submit = SubmitField('Add Category')
 
 
 # Comment post

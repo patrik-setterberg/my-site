@@ -12,8 +12,12 @@
                 {{ wtf.form_errors(form, hiddens="only") }}
 
                 {{ wtf.form_field(form.post_title) }}
-                {{ wtf.form_field(form.post_body) }}
+                {{ wtf.form_field(form.post_body, rows=6) }}
+                {{ wtf.form_field(form.category) }}
                 {{ wtf.form_field(form.submit) }}
+            </form>
+            <form action="" method="post">
+                {{ wtf.quick_form(add_cat) }}
             </form>
         </div>
 </div>

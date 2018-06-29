@@ -34,6 +34,7 @@ class BlogPost(db.Model):
     comments = db.relationship('BlogComment', backref='blog_post',
                                lazy='dynamic')
     last_edit = db.Column(db.DateTime, index=True)
+    category = db.Column(db.String(32))
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -49,3 +50,11 @@ class BlogComment(db.Model):
 
     def __repr__(self):
         return '<comment {}>'.format(self.body)
+
+
+class BlogCategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(32))
+
+    def __repr__(self):
+        return '<tag {}>'.format(self.tag)

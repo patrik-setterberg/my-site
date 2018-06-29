@@ -8,17 +8,26 @@
     <hr>
     <h4>Publish a new blog post!</h4>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <form action="" method="post">
                 {{ form.hidden_tag() }}
                 {{ wtf.form_errors(form, hiddens="only") }}
 
                 {{ wtf.form_field(form.post_title) }}
-                {{ wtf.form_field(form.post_body) }}
+                {{ wtf.form_field(form.post_body, rows=6) }}
+
+                {{ wtf.form_field(form.category) }}
                 {{ wtf.form_field(form.submit) }}
+
+            </form>
+        </div>
+        <div class="col-md-4">
+            <form action="" method="post">
+                {{ wtf.quick_form(add_cat) }}
             </form>
         </div>
     </div>
+
 </div><hr>
 
 <div class="row">
