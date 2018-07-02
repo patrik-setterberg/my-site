@@ -1,8 +1,8 @@
 <hr>
 <p class="load_comments" style="cursor: pointer;">Load comments</p>
 <div class="comments">
-    <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
     <h4>Comments</h4>
+    <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
     {% if comments %}
         {% for comment in comments %}
             {% if comment.post_id == post.id %}

@@ -9,7 +9,7 @@
                     <p>
                         Posted
                         {{ post.timestamp.strftime("%Y-%m-%d") }}
-                        in category <b><a href="{{ url_for('blog') }}">{{ post.category }}</a></b>
+                        in category <b><a href="{{ url_for('browse_cat', category=post.category) }}">{{ post.category.capitalize() }}</a></b>
                         {% if post.last_edit %}
                         - Edited: {{ post.last_edit.strftime("%Y-%m-%d") }}
                         {% endif %}

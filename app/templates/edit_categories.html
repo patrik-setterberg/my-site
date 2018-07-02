@@ -27,6 +27,9 @@
         <form action="" method="post">
             {{ wtf.quick_form(add_cat) }}
         </form>
+        <p style="padding-top:5pt;"><small>
+            Note: Categories are saved in all lower case in database but rendered capitalize()d.
+        </small></p>
     </div>
 </div>
 {% endblock %}

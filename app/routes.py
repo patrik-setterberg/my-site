@@ -38,9 +38,31 @@ def blog():
 
     comments = BlogComment.query.all()  # not particularly elegant
 
-    return render_template('blog.html', title='Home', posts=posts.items,
+    return render_template('blog.html', title='Blog', posts=posts.items,
                            next_url=next_url, prev_url=prev_url,
                            comments=comments)
+
+
+# browse blog posts by category
+@app.route('/blog/cat/<category>', methods=['GET'])
+def browse_cat(category):
+
+    # retrieve category posts and comments from database
+    page = request.args.get('page', 1, type=int)
+    posts = (BlogPost.query.filter_by(category=category)
+             .order_by(BlogPost.timestamp.desc())
+             .paginate(page, app.config['POSTS_PER_PAGE'], False))
+    next_url = url_for('blog/cat/<category>', page=posts.next_num) \
+        if posts.has_next else None
+    prev_url = url_for('blog/cat/<category>', page=posts.prev_num) \
+        if posts.has_prev else None
+
+    # NÅN TYP AV JOIN? GET COMMENTS FOR POSTS IN CATEGORY PLS
+    comments = BlogComment.query.all()  # not particularly elegant
+
+    return render_template('blog.html', title=('Blogposts in ' + category),
+                           posts=posts.items, next_url=next_url,
+                           prev_url=prev_url, comments=comments)
 
 
 # post page
@@ -63,13 +85,13 @@ def post(post_id):
         db.session.commit()
 
         flash('Your comment has been submitted. Thank you!')
-        return redirect(url_for('post', post_id=post.id))
+        return redirect(url_for('post', post_id=post.id, title=post.title))
 
     elif request.method == 'GET':
         form.post_id.data = post.id
 
     return render_template('post.html', form=form, post=post,
-                           comments=comments)
+                           comments=comments, title=post.title)
 
 
 # login route
@@ -251,7 +273,7 @@ def edit_categories():
     # add new category
     if add_cat.validate_on_submit() and add_cat.submit.data:
 
-        new_cat = BlogCategory(category=add_cat.category.data)
+        new_cat = BlogCategory(category=add_cat.category.data.lower())
 
         db.session.add(new_cat)
         db.session.commit()
