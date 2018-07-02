@@ -8,22 +8,37 @@ from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
 
-@app.route('/', methods=['GET', 'POST'])  # change '/' to actual home
-@app.route('/blog', methods=['GET', 'POST'])
+# home
+@app.route('/', methods=['GET'])  # change '/' to actual home
+@app.route('/index', methods=['GET', 'POST'])
 def index():
+
+    return render_template('index.html')
+
+
+# portfolio
+@app.route('/portfolio', methods=['GET'])
+def portfolio():
+
+    return render_template('portfolio.html')
+
+
+# blog
+@app.route('/blog', methods=['GET', 'POST'])
+def blog():
 
     # retrieve posts and comments from database
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False)
-    next_url = url_for('index', page=posts.next_num) \
+    next_url = url_for('blog', page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) \
+    prev_url = url_for('blog', page=posts.prev_num) \
         if posts.has_prev else None
 
     comments = BlogComment.query.all()  # not particularly elegant
 
-    return render_template('index.html', title='Home', posts=posts.items,
+    return render_template('blog.html', title='Home', posts=posts.items,
                            next_url=next_url, prev_url=prev_url,
                            comments=comments)
 
@@ -111,8 +126,6 @@ def manage_blog():
     form.category.choices = ([(cat.category, cat.category) for cat in
                              BlogCategory.query.all()])
 
-    add_cat = AddCategoryForm()
-
     # post new comment
     if form.validate_on_submit() and form.submit.data:
 
@@ -124,16 +137,7 @@ def manage_blog():
         db.session.commit()
 
         flash('Post is now live!')
-        return redirect(url_for('index'))
-
-    # add new category
-    elif add_cat.validate_on_submit() and add_cat.submit.data:
-        new_cat = BlogCategory(category=add_cat.category.data)
-
-        db.session.add(new_cat)
-        db.session.commit()
-
-        return redirect(url_for('manage_blog'))
+        return redirect(url_for('blog'))
 
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
@@ -144,8 +148,8 @@ def manage_blog():
         if posts.has_prev else None
 
     return render_template('manage_blog.html', title='Manage Blog',
-                           form=form, posts=posts.items, add_cat=add_cat,
-                           next_url=next_url, prev_url=prev_url)
+                           form=form, posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
 
 
 # edit blog post
@@ -156,8 +160,6 @@ def edit_blog_post(post_id):
     form = BlogPostForm()
     form.category.choices = ([(cat.category, cat.category) for cat in
                              BlogCategory.query.all()])
-
-    add_cat = AddCategoryForm()
 
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
 
@@ -173,25 +175,12 @@ def edit_blog_post(post_id):
         flash('Changes saved.')
         return redirect(url_for('manage_blog'))
 
-    # add new category
-    elif add_cat.validate_on_submit() and add_cat.submit.data:
-
-        new_cat = BlogCategory(category=add_cat.category.data)
-
-        db.session.add(new_cat)
-        db.session.commit()
-
-        flash('Category added.')
-        return redirect(url_for('edit_blog_post', form=form,
-                        add_cat=add_cat, post=post, post_id=post_id))
-
     elif request.method == 'GET':
         form.post_title.data = post.title
         form.post_body.data = post.body
         form.category.data = post.category
 
-    return render_template('edit_blog_post.html', form=form,
-                           add_cat=add_cat, post=post)
+    return render_template('edit_blog_post.html', form=form, post=post)
 
 
 # delete blog post
@@ -237,9 +226,9 @@ def manage_comments(post_id):
                            prev_url=prev_url)
 
 
-# delete and redirect back to manage comments
+# delete comment and redirect back to manage comments
 @app.route('/admin/delete_comment/<post_id>/<comment_id>',
-           methods=['GET', 'POST'])
+           methods=['GET'])
 @login_required
 def delete_comment(comment_id, post_id):
 
@@ -249,3 +238,41 @@ def delete_comment(comment_id, post_id):
     db.session.commit()
 
     return redirect(url_for('manage_comments', post_id=post_id))
+
+
+# manage blog post categories
+@app.route('/admin/edit_categories', methods=['GET', 'POST'])
+@login_required
+def edit_categories():
+
+    add_cat = AddCategoryForm()
+    categories = BlogCategory.query.all()
+
+    # add new category
+    if add_cat.validate_on_submit() and add_cat.submit.data:
+
+        new_cat = BlogCategory(category=add_cat.category.data)
+
+        db.session.add(new_cat)
+        db.session.commit()
+
+        flash('Category added.')
+        return redirect(url_for('edit_categories'))
+
+    return render_template('edit_categories.html', add_cat=add_cat,
+                           categories=categories)
+
+
+# delete category and redirect back to edit category
+@app.route('/admin/delete_category/<cat_id>',
+           methods=['GET', 'POST'])
+@login_required
+def delete_category(cat_id):
+
+    category = BlogCategory.query.filter_by(id=int(cat_id)).first_or_404()
+
+    db.session.delete(category)
+    db.session.commit()
+
+    flash('Category removed.')
+    return redirect(url_for('edit_categories'))

@@ -7,7 +7,7 @@
         {% for comment in comments %}
             {% if comment.post_id == post.id %}
                 <p>
-                    <i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC
+                    <i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d") }}
                 </p>
                 <p style="white-space: pre-wrap;">{{ comment.body }}</p>
                 <hr>

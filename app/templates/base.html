@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1", aria-expanded="false">
@@ -43,8 +43,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('index') }}">Home</a></li>
-                    <li><a href="{{ url_for('index') }}">Portfolio</a></li>
-                    <li><a href="{{ url_for('index') }}">Blog</a></li>
+                    <li><a href="{{ url_for('portfolio') }}">Portfolio</a></li>
+                    <li><a href="{{ url_for('blog') }}">Blog</a></li>
                 </ul>
 
                 {# ADMIN TOOLS #}
@@ -59,6 +59,13 @@
             </div>
         </div>
     </nav>
+
+    {% if request.endpoint == 'blog' or request.endpoint == 'post' %}
+    <div class="container">
+        <p>BLOG NAVIGATION</p>
+    </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block content %}
@@ -70,7 +77,6 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-
         {% block app_content %}{# APP CONTENT HERE #}{% endblock %}
     </div>
 {% endblock %}

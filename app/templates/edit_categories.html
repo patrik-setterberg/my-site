@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+    <h3>{% raw %}{ admin.edit_categories }{% endraw %}</h3>
+    <hr>
+    <div class="col-md-6">
+        <table class="table table-hover">
+        {% for cat in categories %}
+            <tr>
+                <td>
+                    <p>{{ cat.category }}</p>
+                </td>
+                <td>
+                    <p style="text-align:right;">
+                        <a href="{{ url_for('delete_category', cat_id=cat.id) }}">Delete category</a>
+                    </p>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <p>KANSKE VORE NAJS ATT KUNNA SE HUR MÅNGA POSTS SOM FINNS I VARJE KATEGORI???</p>
+    </div>
+
+    <div class="col-md-6">
+        <form action="" method="post">
+            {{ wtf.quick_form(add_cat) }}
+        </form>
+    </div>
+</div>
+{% endblock %}

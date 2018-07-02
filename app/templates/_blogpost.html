@@ -3,13 +3,15 @@
         <tr>
             <td>
                 <div>
-                    <h3>{{ post.title }}</h3>
+                    <h3>
+                        <a href="{{ url_for('post', post_id=post.id) }}">{{ post.title }}</a>
+                    </h3>
                     <p>
                         Posted
                         {{ post.timestamp.strftime("%Y-%m-%d") }}
-                        in category <b>{{ post.category }}</b>
+                        in category <b><a href="{{ url_for('blog') }}">{{ post.category }}</a></b>
                         {% if post.last_edit %}
-                        - Edited: {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
+                        - Edited: {{ post.last_edit.strftime("%Y-%m-%d") }}
                         {% endif %}
                     </p>
                     <p style="white-space: pre-wrap;">{{ post.body }}</p>
