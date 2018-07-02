@@ -52,17 +52,18 @@ def browse_cat(category):
     posts = (BlogPost.query.filter_by(category=category)
              .order_by(BlogPost.timestamp.desc())
              .paginate(page, app.config['POSTS_PER_PAGE'], False))
-    next_url = url_for('blog/cat/<category>', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('blog/cat/<category>', page=posts.prev_num) \
-        if posts.has_prev else None
+    next_url = url_for('browse_cat', category=category,
+                       page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('browse_cat', category=category,
+                       page=posts.prev_num) if posts.has_prev else None
 
     # NÅN TYP AV JOIN? GET COMMENTS FOR POSTS IN CATEGORY PLS
     comments = BlogComment.query.all()  # not particularly elegant
 
-    return render_template('blog.html', title=('Blogposts in ' + category),
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url, comments=comments)
+    return render_template('blog.html', title=(
+                           'Browsing category: ' + category.capitalize()),
+                           posts=posts.items, comments=comments,
+                           next_url=next_url, prev_url=prev_url)
 
 
 # post page
@@ -71,7 +72,17 @@ def post(post_id):
 
     form = BlogCommentForm()
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
-    comments = BlogComment.query.filter_by(post_id=int(post_id)).all()
+    page = request.args.get('page', 1, type=int)
+    comments = (BlogComment.query.filter_by(post_id=int(post_id)).order_by(
+                BlogComment.timestamp.desc()).paginate(
+                page, app.config['COMMENTS_PER_PAGE'], False))
+
+    next_url = url_for('post', post_id=post_id,
+                       page=comments.next_num) \
+        if comments.has_next else None
+    prev_url = url_for('post', post_id=post_id,
+                       page=comments.prev_num) \
+        if comments.has_prev else None
 
     # POST
     if form.validate_on_submit():
@@ -91,7 +102,8 @@ def post(post_id):
         form.post_id.data = post.id
 
     return render_template('post.html', form=form, post=post,
-                           comments=comments, title=post.title)
+                           comments=comments.items, title=post.title,
+                           next_url=next_url, prev_url=prev_url)
 
 
 # login route

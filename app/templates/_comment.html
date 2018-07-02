@@ -4,6 +4,7 @@
     <h4>Comments</h4>
     <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
     {% if comments %}
+        {# VORE NICE MED EN LIMIT PÅ ANTAL COMMENTS #}
         {% for comment in comments %}
             {% if comment.post_id == post.id %}
                 <p>
