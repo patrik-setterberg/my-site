@@ -30,6 +30,7 @@
                 <small>Note: email will remain hidden and will only be used to send you a notification of a reply to your comment.</small>
             </p>
             {{ wtf.form_field(form.comment_body) }}
+            {{ wtf.form_field(form.recaptcha) }}
             {{ wtf.form_field(form.submit) }}
         </form>
     </div>

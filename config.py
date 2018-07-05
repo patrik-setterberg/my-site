@@ -17,6 +17,10 @@ class Config(object):
     TITLES_PER_PAGE = 10
     COMMENTS_PER_PAGE = 10
 
+    # KEYS FOR LOCALHOST ONLY. MUST FIX SOMEHOW LATER.
+    RECAPTCHA_PUBLIC_KEY = '6LeYIbsSAAAAACRPIllxA7wvXjIE411PfdB2gt2J'
+    RECAPTCHA_PRIVATE_KEY = '6LeYIbsSAAAAAJezaIq3Ft_hSTo0YtyeFG-JgRtu'
+
     # e-mail server details
     # MAIL_SERVER = os.environ.get('MAIL_SERVER')
     # MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)

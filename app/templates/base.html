@@ -29,7 +29,11 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse"
+    {% if current_user.is_authenticated %}
+        style="margin-bottom:0px;"
+    {% endif %}
+    >
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1", aria-expanded="false">
@@ -47,23 +51,45 @@
                     <li><a href="{{ url_for('blog') }}">Blog</a></li>
                 </ul>
 
-                {# ADMIN TOOLS #}
-                {% if current_user.is_authenticated %}
+                {# PAGE SUBMENUS #}
+
+                {% if request.endpoint == 'index' %}
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ url_for('admin') }}">Edit Home Page</a></li>
-                    <li><a href="{{ url_for('admin') }}">Edit Portfolio</a></li>
-                    <li><a href="{{ url_for('manage_blog') }}">Manage Blog</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                    {% endif %}
+                    <li class="navbar-text"><em>Not an inspirational quote but something interesting here.</em></li>
                 </ul>
+                {% endif %}
+
+                {% if request.endpoint == 'portfolio' %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/patrik-setterberg/">GitHub Page</a></li>
+                    <li><a href="#">Something else maybe</a></li>
+                </ul>
+                {% endif %}
+
+                {% if request.endpoint == 'blog' or request.endpoint == 'post' or request.endpoint == 'browse_cat' %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('blog') }}">All posts?</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle"
+                        data-toggle="dropdown" role="button"
+                        aria-haspopup="true" aria-expanded="false">Browse by category <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('blog') }}">cat1</a></li>
+                            <li><a href="{{ url_for('blog') }}">cat2</a></li>
+                            <li><a href="{{ url_for('blog') }}">cat3</a></li>
+                            <li><a href="{{ url_for('blog') }}">cat4</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% endif %}
+
             </div>
         </div>
     </nav>
 
-    {% if request.endpoint == 'blog' or request.endpoint == 'post' or request.endpoint == 'browse_cat' %}
-    <div class="container">
-        <p>BLOG NAVIGATION</p>
-    </div>
+    {# ADMIN TOOLS #}
+    {% if current_user.is_authenticated %}
+        {% include "_admin_menu.html" %}
     {% endif %}
 
 {% endblock %}
@@ -77,6 +103,8 @@
             {% endfor %}
         {% endif %}
         {% endwith %}
-        {% block app_content %}{# APP CONTENT HERE #}{% endblock %}
+
+        {# APP CONTENT HERE #}
+        {% block app_content %}{% endblock %}
     </div>
 {% endblock %}

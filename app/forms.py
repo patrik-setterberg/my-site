@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.recaptcha import RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms import TextField, HiddenField, SelectField
 from wtforms import ValidationError
@@ -35,6 +36,7 @@ class BlogCommentForm(FlaskForm):
     comment_email = TextField('Your email', validators=[Email()])
     comment_body = TextAreaField('Comment', validators=[
         DataRequired(), Length(min=1, max=1000)])
+    recaptcha = RecaptchaField()
     post_id = HiddenField('', validators=[DataRequired()])
     submit = SubmitField('Submit')
     # captcha ???

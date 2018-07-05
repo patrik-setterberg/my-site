@@ -19,7 +19,6 @@ login.login_view = 'login'
 # mail = Mail(app)
 bootstrap = Bootstrap(app)
 
-
 from app import errors, models, routes
 
 # mail and file error logging
