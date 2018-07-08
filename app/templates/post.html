@@ -12,34 +12,14 @@
                 - Edited: {{ post.last_edit.strftime("%Y-%m-%d") }}
             {% endif %}
         </p>
-        <p style="white-space: pre-wrap;">{{ post.body }}</p>
+        <p style="white-space: pre-wrap;">{{ post.body|safe }}</p>
     </div>
 </div>
 <hr>
-<div class="row">
-    <div class="col-md-6">
-        <p style="font-weight:bold;">Post a comment:</p>
-        <form action="" method="post">
-            {{ form.hidden_tag() }}
-            {{ wtf.form_errors(form, hiddens="only") }}
-
-            {{ wtf.form_field(form.post_id)}}
-            {{ wtf.form_field(form.comment_author) }}
-            {{ wtf.form_field(form.comment_email) }}
-            <p>
-                <small>Note: email will remain hidden and will only be used to send you a notification of a reply to your comment.</small>
-            </p>
-            {{ wtf.form_field(form.comment_body) }}
-            {{ wtf.form_field(form.recaptcha) }}
-            {{ wtf.form_field(form.submit) }}
-        </form>
-    </div>
-</div>
 
 <div class="row">
     <div class="col-md-12">
-        <hr>
-        <h3>Comments</h3>
+        <h4>Comments</h4>
         {% if comments %}
             {% for comment in comments %}
                 <table class="table table-hover">
@@ -54,6 +34,26 @@
         {% else %}
             <p>No comments yet.</p>
         {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Post a comment:</h4>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+
+            {{ wtf.form_field(form.post_id)}}
+            {{ wtf.form_field(form.comment_author) }}
+            {{ wtf.form_field(form.comment_email) }}
+            <p>
+                <small>Note: email will remain hidden and will only be used to send you a notification of a reply to your comment.</small>
+            </p>
+            {{ wtf.form_field(form.comment_body) }}
+            {{ wtf.form_field(form.recaptcha) }}
+            {{ wtf.form_field(form.submit) }}
+        </form>
     </div>
 </div>
 

@@ -5,6 +5,7 @@ from app.models import User, BlogPost, BlogComment, BlogCategory
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
+import markdown
 from werkzeug.urls import url_parse
 
 
@@ -31,6 +32,10 @@ def blog():
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False)
+
+    for post in posts.items:
+        post.body = markdown.markdown(post.body)
+
     next_url = url_for('blog', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('blog', page=posts.prev_num) \
@@ -52,6 +57,10 @@ def browse_cat(category):
     posts = (BlogPost.query.filter_by(category=category)
              .order_by(BlogPost.timestamp.desc())
              .paginate(page, app.config['POSTS_PER_PAGE'], False))
+
+    for post in posts.items:
+        post.body = markdown.markdown(post.body)
+
     next_url = url_for('browse_cat', category=category,
                        page=posts.next_num) if posts.has_next else None
     prev_url = url_for('browse_cat', category=category,
@@ -72,6 +81,9 @@ def post(post_id):
 
     form = BlogCommentForm()
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+
+    post.body = markdown.markdown(post.body)
+
     page = request.args.get('page', 1, type=int)
     comments = (BlogComment.query.filter_by(post_id=int(post_id)).order_by(
                 BlogComment.timestamp.desc()).paginate(
