@@ -17,12 +17,12 @@
                 <p style="white-space: pre-wrap;">{{ post.body }}</p>
 
                 <hr>
-                <h4>Delete post</h4>
-                <p>Do you wish to delete this post and all its comments?</p>
+                <h4>Set post score</h4>
+                <p>Because screw public opinion.</p>
                 <form action="" method="post">
                     {{ form.hidden_tag() }}
                     {{ wtf.form_errors(form, hiddens="only") }}
-                    {{ wtf.form_field(form.del_field) }}
+                    {{ wtf.form_field(form.score) }}
                     {{ wtf.form_field(form.submit) }}
                 </form>
             </td>

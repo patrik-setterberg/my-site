@@ -4,6 +4,11 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
 
+    DEBUG = True  # CHANGE BEFORE DEPLOY IF IT EVEN WORKS
+
+    UPLOADED_IMAGES_DEST = os.path.join(basedir, 'static/img/blog_photos/')
+    UPLOADED_IMAGES_URL = 'http://localhost:5000/static/img/blog_photos/'
+
     # secret key protects against CSRF-attacks
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-kvarjo'
 
@@ -13,7 +18,7 @@ class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # settings for pagination of blog posts
-    POSTS_PER_PAGE = 5
+    POSTS_PER_PAGE = 10
     TITLES_PER_PAGE = 10
     COMMENTS_PER_PAGE = 10
 

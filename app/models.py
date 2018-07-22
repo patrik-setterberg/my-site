@@ -35,6 +35,9 @@ class BlogPost(db.Model):
                                lazy='dynamic')
     last_edit = db.Column(db.DateTime, index=True)
     category = db.Column(db.String(32))
+    photo_filename = db.Column(db.String(100), nullable=True)
+    photo_alt_text = db.Column(db.String(140), default="Image alt text")
+    post_score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
@@ -47,6 +50,7 @@ class BlogComment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     post_id = db.Column(db.Integer, db.ForeignKey('blog_post.id'))
     email = db.Column(db.String(120), index=True)
+    # comment_score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<comment {}>'.format(self.body)

@@ -1,4 +1,6 @@
+from app import images
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed
 from flask_wtf.recaptcha import RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms import TextField, HiddenField, SelectField
@@ -20,6 +22,9 @@ class BlogPostForm(FlaskForm):
     post_body = TextAreaField('Post body', validators=[
         DataRequired(), Length(min=1, max=1000)])
     category = SelectField('Category')
+    photo = FileField('Post photo', validators=[
+                      FileAllowed(images, 'Only images allowed.')])
+    photo_alt_text = TextField('Photo alt-text')
     submit = SubmitField('Submit post')
 
 
@@ -39,7 +44,6 @@ class BlogCommentForm(FlaskForm):
     recaptcha = RecaptchaField()
     post_id = HiddenField('', validators=[DataRequired()])
     submit = SubmitField('Submit')
-    # captcha ???
 
 
 # Delete blog post
@@ -51,3 +55,10 @@ class DeletePostForm(FlaskForm):
     def validate_del_field(FlaskForm, field):
         if field.data != 'DELETE':
             raise ValidationError('Please confirm deletion. Properly.')
+
+
+# Edit blog post score
+class EditScoreForm(FlaskForm):
+    score = TextField('', validators=[DataRequired(),
+                      Length(min=1, max=5)])
+    submit = SubmitField('Update score')

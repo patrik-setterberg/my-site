@@ -14,9 +14,15 @@
                         - Edited: {{ post.last_edit.strftime("%Y-%m-%d") }}
                         {% endif %}
                     </p>
+                    {% if post.photo_filename %}
+                        <img src="{{ url_for('static', filename='img/blog_photos/' + post.photo_filename) }}" alt="{{ post.photo_alt_text }}">
+                    {% endif %}
                     <p style="white-space: pre-wrap;">{{ post.body|safe }}</p>
                 </div>
+
                 <div>
+                    <hr>
+                    <p style="float:right;">Post score: <strong>{{ post.post_score }}</strong> - <a href="{{ url_for('approve', post_id=post.id, url=request.url) }}">Click to approve.</a></p>
                     {% include '_comment.html' %}
                 </div>
             </td>

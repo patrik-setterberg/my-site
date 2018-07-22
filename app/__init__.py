@@ -5,6 +5,7 @@ from flask_login import LoginManager
 # from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_uploads import UploadSet, IMAGES, configure_uploads
 import logging
 import os
 from logging.handlers import RotatingFileHandler  # SMTPHandler
@@ -18,6 +19,8 @@ login = LoginManager(app)
 login.login_view = 'login'
 # mail = Mail(app)
 bootstrap = Bootstrap(app)
+images = UploadSet('images', IMAGES)
+configure_uploads(app, images)
 
 from app import errors, models, routes
 
@@ -41,6 +44,10 @@ if not app.debug:
     #     credentials=auth, secure=secure)
     #     mail_handler.setLevel(logging.ERROR)
     #     app.logger.addhandler(mail_handler)
+
+    # make sure photos folder exists
+    if not os.path.exists('static/img/blog_photos'):
+        os.mkdir('static/img/blog_photos')
 
     # logging to file
     if not os.path.exists('logs'):

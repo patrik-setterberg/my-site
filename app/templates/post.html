@@ -14,6 +14,7 @@
         </p>
         <p style="white-space: pre-wrap;">{{ post.body|safe }}</p>
     </div>
+    <p style="float:right;">Post score: <strong>{{ post.post_score }}</strong> - <a href="{{ url_for('approve', post_id=post.id, url=request.url) }}">Click to approve.</a></p>
 </div>
 <hr>
 

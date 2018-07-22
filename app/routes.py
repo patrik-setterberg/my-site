@@ -1,6 +1,6 @@
-from app import app, db
+from app import app, db, images
 from app.forms import LoginForm, BlogPostForm, BlogCommentForm, DeletePostForm
-from app.forms import AddCategoryForm
+from app.forms import AddCategoryForm, EditScoreForm
 from app.models import User, BlogPost, BlogComment, BlogCategory
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
@@ -118,6 +118,23 @@ def post(post_id):
                            next_url=next_url, prev_url=prev_url)
 
 
+# approve post
+@app.route('/approve/<post_id>/', methods=['GET'])
+def approve(post_id):
+
+    url = request.args.get('url')
+
+    # get post from database
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+
+    # increase score
+    post.post_score += 1
+    db.session.commit()
+
+    flash('Post approved. Thank you!')
+    return redirect(url)
+
+
 # login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -172,12 +189,22 @@ def manage_blog():
     form.category.choices = ([(cat.category, cat.category) for cat in
                              BlogCategory.query.all()])
 
-    # post new comment
+    # Publish new blog post
     if form.validate_on_submit() and form.submit.data:
 
-        post = BlogPost(title=form.post_title.data,
-                        body=form.post_body.data,
-                        category=form.category.data)
+        if 'photo' in request.files:
+            filename = images.save(request.files['photo'])
+
+            post = BlogPost(title=form.post_title.data,
+                            body=form.post_body.data,
+                            category=form.category.data,
+                            photo_filename=filename,
+                            photo_alt_text=form.photo_alt_text.data)
+
+        else:
+            post = BlogPost(title=form.post_title.data,
+                            body=form.post_body.data,
+                            category=form.category.data)
 
         db.session.add(post)
         db.session.commit()
@@ -227,6 +254,26 @@ def edit_blog_post(post_id):
         form.category.data = post.category
 
     return render_template('edit_blog_post.html', form=form, post=post)
+
+
+# edit blog post score
+@app.route('/admin/edit_score/<post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_score(post_id):
+
+    form = EditScoreForm()
+    post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
+
+    if form.validate_on_submit():
+        post.post_score = int(form.score.data)
+        db.session.commit()
+
+        flash('Post score updated successfully.')
+        return redirect(url_for('manage_blog'))
+
+    form.score.data = post.post_score
+
+    return render_template('edit_score.html', form=form, post=post)
 
 
 # delete blog post
