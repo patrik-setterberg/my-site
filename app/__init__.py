@@ -10,7 +10,6 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler  # SMTPHandler
 
-
 app = Flask(__name__)
 app.config.from_object(Config)
 db = SQLAlchemy(app)
@@ -21,6 +20,7 @@ login.login_view = 'login'
 bootstrap = Bootstrap(app)
 images = UploadSet('images', IMAGES)
 configure_uploads(app, images)
+
 
 from app import errors, models, routes
 

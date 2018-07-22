@@ -264,7 +264,8 @@ def edit_score(post_id):
     form = EditScoreForm()
     post = BlogPost.query.filter_by(id=int(post_id)).first_or_404()
 
-    if form.validate_on_submit():
+    if form.validate_on_submit() and form.submit.data:
+
         post.post_score = int(form.score.data)
         db.session.commit()
 

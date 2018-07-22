@@ -1,4 +1,4 @@
-<p class="load_comments" style="cursor: pointer;">Load comments</p>
+<p class="load_comments" style="cursor: pointer;">Load comments ({{ count_comments(post.id) }})</p>
 <div class="comments">
     <h4>Comments</h4>
     <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>

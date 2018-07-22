@@ -3,30 +3,33 @@
 
 {% block app_content %}
 <div class="row">
-    <table class="table table-hover">
-        <tr>
-            <td>
-                <h4>{{ post.title }}</h4>
-                <p><i>Posted:</i> {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
-                {% if post.last_edit %}
-                    <p>
-                        <i>Last edit:</i>{{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
-                    </p>
-                {% endif %}
+    <div>
+        <table class="table table-hover">
+            <tr>
+                <td>
+                    <h4>{{ post.title }}</h4>
+                    <p><i>Posted:</i> {{ post.timestamp.strftime("%Y-%m-%d, %H:%M") }} UTC.</p>
+                    {% if post.last_edit %}
+                        <p>
+                            <i>Last edit:</i>{{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }}
+                        </p>
+                    {% endif %}
+                    <p style="white-space: pre-wrap;">{{ post.body }}</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div class="col-md-4">
+        <h4>Set post score</h4>
+        <p>Because screw public opinion.</p>
 
-                <p style="white-space: pre-wrap;">{{ post.body }}</p>
-
-                <hr>
-                <h4>Set post score</h4>
-                <p>Because screw public opinion.</p>
-                <form action="" method="post">
-                    {{ form.hidden_tag() }}
-                    {{ wtf.form_errors(form, hiddens="only") }}
-                    {{ wtf.form_field(form.score) }}
-                    {{ wtf.form_field(form.submit) }}
-                </form>
-            </td>
-        </tr>
-    </table>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+            {{ wtf.form_field(form.score) }}
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
 </div>
 {% endblock %}

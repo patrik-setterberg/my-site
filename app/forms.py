@@ -62,3 +62,7 @@ class EditScoreForm(FlaskForm):
     score = TextField('', validators=[DataRequired(),
                       Length(min=1, max=5)])
     submit = SubmitField('Update score')
+
+    def validate_score(FlaskForm, field):
+        if not field.data.isdigit():
+            raise ValidationError('Score can\'t be non-integer.')
