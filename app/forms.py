@@ -30,8 +30,8 @@ class BlogPostForm(FlaskForm):
 
 # Add new blog tags
 class AddCategoryForm(FlaskForm):
-    category = TextField('Add category', validators=[DataRequired()])
-    submit = SubmitField('Add Category')
+    category = TextField('Category name', validators=[DataRequired()])
+    submit = SubmitField('Submit')
 
 
 # Comment post
@@ -43,7 +43,7 @@ class BlogCommentForm(FlaskForm):
         DataRequired(), Length(min=1, max=1000)])
     recaptcha = RecaptchaField()
     post_id = HiddenField('', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Submit comment')
 
 
 # Delete blog post

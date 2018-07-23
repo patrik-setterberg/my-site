@@ -22,7 +22,7 @@
 
                 <div>
                     <hr>
-                    <p style="float:right;">Post score: <strong>{{ post.post_score }}</strong> - <a href="{{ url_for('approve', post_id=post.id, url=request.url) }}">Click to approve</a></p>
+                    <p style="float:right;">Post score: <strong>{{ post.post_score }}</strong> <span class="glyphicon glyphicon-thumbs-up"></span> - <a href="{{ url_for('approve', post_id=post.id, url=request.url) }}">Click to <span class="glyphicon glyphicon-chevron-up"></span></a></p>
                     {% include '_comment.html' %}
                 </div>
             </td>

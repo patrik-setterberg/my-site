@@ -42,7 +42,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">my_site</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}"><span class="fa fa-flask"></span> my_site</a>
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -61,7 +61,7 @@
 
                 {% if request.endpoint == 'portfolio' %}
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="https://github.com/patrik-setterberg/">GitHub Page</a></li>
+                    <li><a href="https://github.com/patrik-setterberg/"><span class="fa fa-github"></span> GitHub Page</a></li>
                     <li><a href="#">Something else maybe</a></li>
                 </ul>
                 {% endif %}

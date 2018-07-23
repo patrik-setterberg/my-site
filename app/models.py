@@ -50,7 +50,6 @@ class BlogComment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     post_id = db.Column(db.Integer, db.ForeignKey('blog_post.id'))
     email = db.Column(db.String(120), index=True)
-    # comment_score = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         return '<comment {}>'.format(self.body)

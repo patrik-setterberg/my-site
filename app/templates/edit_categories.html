@@ -5,30 +5,41 @@
 <div class="row">
 
     <div class="col-md-6">
+        <h4><span class="fa fa-tasks"></span> Categories (# of posts)</h4>
         <table class="table table-hover">
         {% for cat in categories %}
             <tr>
                 <td>
-                    <p>{{ cat.category }}</p>
+                    <p><strong>{{ cat.category }}</strong> (<a href="{{ url_for('browse_cat', category=cat.category) }}">{{ count_posts(cat.category) }}</a>)</p>
                 </td>
                 <td>
                     <p style="text-align:right;">
-                        <a href="{{ url_for('delete_category', cat_id=cat.id) }}">Delete category</a>
+                        <a href="{{ url_for('delete_category', cat_id=cat.id) }}"><span class="fa fa-trash"></span> Delete category</a>
                     </p>
                 </td>
             </tr>
         {% endfor %}
         </table>
-        <p>KANSKE VORE NAJS ATT KUNNA SE HUR MÅNGA POSTS SOM FINNS I VARJE KATEGORI???</p>
     </div>
 
     <div class="col-md-6">
+        <h4><span class="fa fa-plus-circle"></span> Add new category</h4>
         <form action="" method="post">
             {{ wtf.quick_form(add_cat) }}
         </form>
-        <p style="padding-top:5pt;"><small>
-            Note: Categories are saved in all lower case in database but rendered capitalize()d.
-        </small></p>
+    </div>
+    <div class="col-md-6" style="padding-top:10pt;">
+        <h4><span class="fa fa-sticky-note-o"></span> Notes</h4>
+        <p>
+            Categories are saved in all lower case in database but rendered capitalize()d.
+        </p>
+        <p>
+            You can only delete a category that has no posts in it. If a category has posts in it, either:
+        </p>
+        <ul>
+            <li>Assign all posts within that category to different categories</li>
+            <li>Delete all posts within category</li>
+        </ul>
     </div>
 </div>
 {% endblock %}

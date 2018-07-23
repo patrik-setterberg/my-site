@@ -19,6 +19,13 @@
             </td>
         </tr>
         {% endfor %}
+        {% if count_comments(post.id) == 0 %}
+        <tr>
+            <td>
+                <p>No comments to manage, yet.</p>
+            </td>
+        </tr>
+        {% endif %}
     </table>
 </div>
 

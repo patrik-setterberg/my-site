@@ -357,16 +357,22 @@ def edit_categories():
                            categories=categories)
 
 
-# delete category and redirect back to edit category
-@app.route('/admin/delete_category/<cat_id>',
-           methods=['GET', 'POST'])
+# delete category and redirect back to edit_categories
+@app.route('/admin/delete_category/<cat_id>', methods=['GET', 'POST'])
 @login_required
 def delete_category(cat_id):
 
     category = BlogCategory.query.filter_by(id=int(cat_id)).first_or_404()
 
-    db.session.delete(category)
-    db.session.commit()
+    posts = BlogPost.query.filter_by(category=category.category)
 
-    flash('Category removed.')
-    return redirect(url_for('edit_categories'))
+    if posts.count() > 0:
+        flash("You cannot delete a category that has posts in it. \
+              Change posts\' categories or delete posts and try again.")
+        return redirect(url_for('edit_categories'))
+    else:
+        db.session.delete(category)
+        db.session.commit()
+
+        flash('Category removed.')
+        return redirect(url_for('edit_categories'))
