@@ -13,7 +13,7 @@
             {{ wtf.form_field(form.post_title) }}
             {{ wtf.form_field(form.post_body, rows=6) }}
             <p>
-                <a href="{{ url_for('edit_categories') }}">Edit categories</a>
+                <a href="{{ url_for('edit_categories') }}"><span class="glyphicon glyphicon-list"></span> Edit categories</a>
             </p>
             {{ wtf.form_field(form.category) }}
             {{ wtf.form_field(form.submit) }}

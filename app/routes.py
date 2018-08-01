@@ -1,7 +1,8 @@
 from app import app, db, images
 from app.forms import LoginForm, BlogPostForm, BlogCommentForm, DeletePostForm
-from app.forms import AddCategoryForm, EditScoreForm
+from app.forms import AddCategoryForm, EditScoreForm, ProjectForm
 from app.models import User, BlogPost, BlogComment, BlogCategory
+from app.models import PortfProject
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -9,22 +10,166 @@ import markdown
 from werkzeug.urls import url_parse
 
 
-# home
-@app.route('/', methods=['GET'])  # change '/' to actual home
+# Home
+@app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
 
     return render_template('index.html')
 
 
-# portfolio
+# Login route
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('admin'))
+
+    form = LoginForm()
+
+    # get user data from database if form is filled out correctly
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
+
+        # check username and password
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password.')
+            return redirect(url_for('login'))
+
+        login_user(user)
+
+        # check for next in URL, else sets redirect to admin page
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('admin')
+
+        return redirect(next_page)
+
+    return render_template('login.html', title='Sign In', form=form)
+
+
+# logout route
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+
+# admin page
+@app.route('/admin')
+@login_required
+def admin():
+    return render_template('admin.html', title='Secret Area')
+
+
+# ## PORTFOLIO ## #
+
 @app.route('/portfolio', methods=['GET'])
 def portfolio():
 
-    return render_template('portfolio.html')
+    projects = PortfProject.query.order_by(PortfProject.id.desc())
+
+    return render_template('portfolio.html', projects=projects)
 
 
-# blog
+# edit portfolio
+@app.route('/admin/edit_portfolio', methods=['GET', 'POST'])
+@login_required
+def edit_portfolio():
+
+    form = ProjectForm()
+
+    if form.validate_on_submit() and form.submit.data:
+
+        if 'cover_img' not in request.files:
+            flash('Project requires a cover photo.')
+            return redirect(url_for('edit_portfolio'))
+
+        filename = images.save(request.files['cover_img'], folder="portfolio/")
+
+        new_project = (PortfProject(
+                       name=form.name.data,
+                       description=form.description.data,
+                       url=form.url.data,
+                       cover_img_filename=filename,
+                       cover_img_alt_txt=form.cover_img_alt_txt.data,
+                       link_text=form.link_text.data))
+
+        db.session.add(new_project)
+        db.session.commit()
+
+        return redirect(url_for('portfolio'))
+
+    projects = PortfProject.query.order_by(PortfProject.id.desc())
+
+    return render_template('edit_portfolio.html', title='Edit Portfolio',
+                           form=form, projects=projects)
+
+
+# edit project
+@app.route('/admin/edit_project/<project_id>', methods=['GET', 'POST'])
+@login_required
+def edit_project(project_id):
+
+    form = ProjectForm()
+
+    project = PortfProject.query.filter_by(id=int(project_id)).first_or_404()
+
+    # update project data
+    if form.validate_on_submit() and form.submit.data:
+
+        project.name = form.name.data
+        project.description = form.description.data
+        project.url = form.url.data
+        project.link_text = form.link_text.data
+        project.cover_img_alt_txt = form.cover_img_alt_txt.data
+
+        if 'cover_img' in request.files:
+
+            # DELETE OLD FILE???
+
+            filename = images.save(request.files['cover_img'],
+                                   folder="portfolio/")
+
+            project.cover_img_filename = filename
+
+        db.session.commit()
+
+        flash('Changes saved.')
+        return redirect(url_for('edit_portfolio'))
+
+    elif request.method == 'GET':
+        form.name.data = project.name
+        form.description.data = project.description
+        form.url.data = project.url
+        form.link_text.data = project.link_text
+        form.cover_img_alt_txt.data = project.cover_img_alt_txt
+
+    return render_template('edit_project.html', form=form, project=project)
+
+
+# delete project
+@app.route('/admin/delete_project/<project_id>', methods=['GET', 'POST'])
+@login_required
+def delete_project(project_id):
+
+    form = DeletePostForm()
+    project = PortfProject.query.filter_by(id=int(project_id)).first_or_404()
+
+    if form.validate_on_submit():
+        db.session.delete(project)
+        db.session.commit()
+
+        # ALSO DELETE PROJECT IMAGE?
+
+        flash('Project deleted successfully.')
+        return redirect(url_for('edit_portfolio'))
+
+    return render_template('delete_project.html', form=form, project=project)
+
+
+# ## BLOG ## #
+
 @app.route('/blog', methods=['GET', 'POST'])
 def blog():
 
@@ -135,51 +280,6 @@ def approve(post_id):
     return redirect(url)
 
 
-# login route
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-
-    if current_user.is_authenticated:
-        return redirect(url_for('admin'))
-
-    # store form data
-    form = LoginForm()
-
-    # get user data from database if form is filled out correctly
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-
-        # check username and password
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password.')
-            return redirect(url_for('login'))
-
-        login_user(user)
-
-        # check for next in URL, else sets redirect to admin page
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('admin')
-
-        return redirect(next_page)
-
-    return render_template('login.html', title='Sign In', form=form)
-
-
-# logout route
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-
-# admin page
-@app.route('/admin')
-@login_required
-def admin():
-    return render_template('admin.html', title='Secret Area')
-
-
 # manage blog
 @app.route('/admin/manage_blog', methods=['GET', 'POST'])
 @login_required
@@ -192,25 +292,23 @@ def manage_blog():
     # Publish new blog post
     if form.validate_on_submit() and form.submit.data:
 
-        if 'photo' in request.files:
-            filename = images.save(request.files['photo'])
+        filename = images.save(request.files['photo'],
+                               folder="blog_photos/")
 
-            post = BlogPost(title=form.post_title.data,
-                            body=form.post_body.data,
-                            category=form.category.data,
-                            photo_filename=filename,
-                            photo_alt_text=form.photo_alt_text.data)
-
-        else:
-            post = BlogPost(title=form.post_title.data,
-                            body=form.post_body.data,
-                            category=form.category.data)
+        post = BlogPost(title=form.post_title.data,
+                        body=form.post_body.data,
+                        category=form.category.data,
+                        photo_filename=filename,
+                        photo_alt_text=form.photo_alt_text.data)
 
         db.session.add(post)
         db.session.commit()
 
         flash('Post is now live!')
         return redirect(url_for('blog'))
+
+    post_count = BlogPost.query.count()
+    comments_count = BlogComment.query.count()
 
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
@@ -222,7 +320,8 @@ def manage_blog():
 
     return render_template('manage_blog.html', title='Manage Blog',
                            form=form, posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, post_count=post_count,
+                           comments_count=comments_count)
 
 
 # edit blog post
@@ -344,6 +443,12 @@ def edit_categories():
 
     # add new category
     if add_cat.validate_on_submit() and add_cat.submit.data:
+
+        # check duplicates
+        for cat in categories:
+            if add_cat.category.data.lower() == cat.category.lower():
+                flash('Category already exists.')
+                return redirect(url_for('edit_categories'))
 
         new_cat = BlogCategory(category=add_cat.category.data.lower())
 

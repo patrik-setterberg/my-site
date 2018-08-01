@@ -10,7 +10,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler  # SMTPHandler
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -48,6 +48,9 @@ if not app.debug:
     # make sure photos folder exists
     if not os.path.exists('static/img/blog_photos'):
         os.mkdir('static/img/blog_photos')
+
+    if not os.path.exists('static/img/portfolio'):
+        os.mkdir('static/img/portfolio')
 
     # logging to file
     if not os.path.exists('logs'):

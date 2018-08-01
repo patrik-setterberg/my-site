@@ -6,14 +6,14 @@
 <div class="row">
 
     <div class="col-md-6">
-        <h4><span class="fa fa-align-right"></span> Publish a new blog post!</h4>
+        <h4><span class="fa fa-file-text-o"></span> Publish a new blog post!</h4>
         <form action="" method="POST" enctype="multipart/form-data">
             {{ form.hidden_tag() }}
             {{ wtf.form_errors(form, hiddens="only") }}
 
             {{ wtf.form_field(form.post_title) }}
             {{ wtf.form_field(form.post_body, rows=6) }}
-            <p><a href="{{ url_for('edit_categories') }}">Edit categories</a></p>
+            <p><a href="{{ url_for('edit_categories') }}"><span class="glyphicon glyphicon-list"></span> Edit categories</a></p>
             {{ wtf.form_field(form.category) }}
             {{ wtf.form_field(form.photo) }}
             {{ wtf.form_field(form.photo_alt_text) }}
@@ -29,11 +29,20 @@
     <div class="col-md-12">
         <h4><span class="fa fa-gears"></span> Manage posts</h4>
 
+        <p>Managing <strong>{{ post_count }}</strong> posts and <strong>{{ comments_count }}</strong>  comments.</p>
+        <p>Most popular post: POST at score SCORE</p>
+        <p>Average post score: AVGPOSTSCORE</p>
+        <p>Last comment received: TIMESTAMP by AUTHOR to LÄNK TO POST</p>
+
         <table class="table table-hover">
             {% for post in posts %}
             <tr>
                 <td>
-                    <p>{{ format_id(post.id) }}</p>
+                    <p>
+                        <a href="{{ url_for('post', post_id=post.id) }}">
+                        {{ format_id(post.id) }}
+                        </a>
+                    </p>
                 </td>
                 <td>
                     <p><b>{{ post.title }}</b></p>
@@ -41,8 +50,7 @@
                 <td>
                     <p style="text-align:right;">
                         {% if post.last_edit %}
-                        Last edit:
-                        {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }} -
+                        * {{ post.last_edit.strftime("%Y-%m-%d, %H:%M") }} -
                         {% endif %}
                         <a href="{{ url_for('edit_score', post_id=post.id) }}">Edit score</a> (<strong>{{ post.post_score }}</strong>) |
                         <a href="{{ url_for('manage_comments', post_id=post.id) }}">Manage comments</a> (<strong>{{ count_comments(post.id) }}</strong>) |
@@ -53,6 +61,7 @@
             </tr>
             {% endfor %}
         </table>
+        <p><strong>*</strong> - Last recorded edit</p>
     </div>
 </div>
 

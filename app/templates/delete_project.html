@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+    <div>
+        <table class="table table-hover">
+            <tr>
+                <td>
+                    <h4>{{ project.name }}</h4>
+                    <p><i>Added:</i> {{ project.timestamp.strftime("%Y-%m-%d, %H:%M") }}.</p>
+                    <p style="white-space: pre-wrap;">{{ project.description|safe }}</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <hr>
+    <div class="col-md-4">
+        <h4><span class="fa fa-trash-o"></span> Delete post</h4>
+        <p>Are you sure you wish to delete this project?</p>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+            {{ wtf.form_field(form.del_field) }}
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
+</div>
+{% endblock %}

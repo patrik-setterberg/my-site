@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+
+<div class="row">
+
+    <div class="col-md-6">
+        <h4><span class="fa fa-file-text-o"></span> Add new project to portfolio</h4>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+
+            {{ wtf.form_field(form.name) }}
+            {{ wtf.form_field(form.description, rows=6) }}
+            {{ wtf.form_field(form.url) }}
+            {{ wtf.form_field(form.link_text) }}
+            {{ wtf.form_field(form.cover_img) }}
+            {{ wtf.form_field(form.cover_img_alt_txt) }}
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
+    <div class="col-md-6">
+        {% include "_blognotes.html" %}
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h4><span class="fa fa-gears"></span> Manage projects</h4>
+        {% if projects %}
+        <table class="table table-hover">
+            {% for project in projects %}
+            <tr>
+                <td>
+                    <p>
+                        <a href="#">
+                        {{ format_id(project.id) }}
+                        </a>
+                    </p>
+                </td>
+                <td>
+                    <p><b>{{ project.name }}</b></p>
+                </td>
+                <td>
+                    <p style="text-align:right;">
+                        <a href="{{ url_for('edit_project', project_id=project.id) }}">Edit project</a> |
+                        <a href="{{ url_for('delete_project', project_id=project.id) }}">Delete Project</a>
+                    </p>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -6,3 +6,4 @@ notes.txt
 logs/
 *.db
 static/img/blog_photos/
+static/img/portfolio/

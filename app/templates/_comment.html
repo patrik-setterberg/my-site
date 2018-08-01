@@ -1,23 +1,24 @@
-<p class="load_comments" style="cursor: pointer;"><span class="glyphicon glyphicon-expand"></span> Load comments ({{ count_comments(post.id) }})</p>
+<p class="load_comments" style="cursor: pointer;"><span class="fa fa-plus-square"></span> Load comments ({{ count_comments(post.id) }})</p>
 <div class="comments">
-    <h4>Comments</h4>
+    <h4><span class="fa fa-comments"></span> Comments</h4>
     <p>Go to <a href="{{ url_for('post', post_id=post.id) }}">post page</a> to add your own comment.</p>
-    {% if comments %}
+    <hr>
+    {% if count_comments(post.id) > 0 %}
         {# VORE NICE MED EN LIMIT PÅ ANTAL COMMENTS #}
         {% for comment in comments %}
             {% if comment.post_id == post.id %}
-                <p>
-                    <i>{{ comment.author }}</i>, on {{ comment.timestamp.strftime("%Y-%m-%d") }}
-                </p>
-                <p style="white-space: pre-wrap;">{{ comment.body }}</p>
-                <hr>
+            <p>
+                <span class="fa fa-user"></span> <strong>{{ comment.author }}</strong> on {{ comment.timestamp.strftime("%Y-%m-%d") }}
+            </p>
+            <p style="white-space: pre-wrap;">{{ comment.body }}</p>
+            <hr>
             {% endif %}
         {% endfor %}
     {% else %}
-        <p>No comments yet.</p> {# DOESN'T WORK AT THE MO #}
+        <p>No comments yet.</p>
     {% endif %}
 
-    <p class="hide_comments" style="padding-top:10px; cursor:pointer;">Hide comments</p>
+    <p class="hide_comments" style="padding-top:10px; cursor:pointer;"><span class="fa fa-minus-square"></span> Hide comments</p>
 </div>
 
 

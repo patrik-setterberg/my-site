@@ -26,6 +26,22 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# ## Portfolio ## #
+class PortfProject(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(3000))
+    url = db.Column(db.String(1000))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    cover_img_filename = db.Column(db.String(140), default=None)
+    cover_img_alt_txt = db.Column(db.String(100), default=None)
+    link_text = db.Column(db.String(50), default="Link to page")
+
+    def __repr__(self):
+        return '<Project {}>'.format(self.name)
+
+
+# ## Blog ## #
 class BlogPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
@@ -60,4 +76,4 @@ class BlogCategory(db.Model):
     category = db.Column(db.String(32))
 
     def __repr__(self):
-        return '<tag {}>'.format(self.tag)
+        return '<cat {}>'.format(self.category)

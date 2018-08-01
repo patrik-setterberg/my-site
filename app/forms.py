@@ -1,6 +1,6 @@
 from app import images
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_wtf.recaptcha import RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms import TextField, HiddenField, SelectField
@@ -15,16 +15,38 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign in')
 
 
-# Blog post
+# ## PORTFOLIO ## #
+
+# New portfolio project
+class ProjectForm(FlaskForm):
+    name = TextField('Project name', validators=[DataRequired(),
+                     Length(min=1, max=100)])
+    description = TextAreaField('Description', validators=[DataRequired(),
+                                Length(min=1, max=3000)])
+    url = TextField('Project URL', validators=[DataRequired(),
+                    Length(min=1, max=1000)])
+    link_text = TextField('Link text', validators=[DataRequired(),
+                          Length(min=0, max=50)])
+    cover_img = FileField('Cover image', validators=[
+                          FileAllowed(images, 'Only images allowed.')])
+    cover_img_alt_txt = TextField('Cover image alt-text', validators=[
+                                  DataRequired(), Length(min=1, max=100)])
+    submit = SubmitField('Submit')
+
+
+# ## BLOG ## #
+
+# New Blog post
 class BlogPostForm(FlaskForm):
     post_title = TextField('Post title', validators=[
         DataRequired(), Length(min=1, max=100)])
     post_body = TextAreaField('Post body', validators=[
         DataRequired(), Length(min=1, max=1000)])
     category = SelectField('Category')
-    photo = FileField('Post photo', validators=[
+    photo = FileField('Post photo', validators=[FileRequired(),
                       FileAllowed(images, 'Only images allowed.')])
-    photo_alt_text = TextField('Photo alt-text')
+    photo_alt_text = TextField('Photo alt-text', validators=[DataRequired(),
+                               Length(min=1, max=140)])
     submit = SubmitField('Submit post')
 
 

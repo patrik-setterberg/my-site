@@ -24,9 +24,9 @@ def count_comments(post_id):
     return comment_count
 
 
-# add leading zeros to post id
-def format_id(post_id):
-    formatted = "{:03}".format(post_id)
+# add leading zeros to p_id (post or project ID)
+def format_id(p_id):
+    formatted = "{:03}".format(p_id)
     return formatted
 
 
