@@ -1,6 +1,6 @@
 from app import images
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed, FileRequired
+from flask_wtf.file import FileField, FileAllowed
 from flask_wtf.recaptcha import RecaptchaField
 from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms import TextField, HiddenField, SelectField
@@ -13,6 +13,17 @@ class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Sign in')
+
+
+# ## HOME PAGE ## #
+
+# Home page content
+class EditHomePageForm(FlaskForm):
+    title = TextField('Title', validators=[DataRequired(),
+                      Length(min=1, max=100)])
+    text_body = TextAreaField('Presentation', validators=[DataRequired(),
+                              Length(min=1, max=5000)])
+    submit = SubmitField('Save changes')
 
 
 # ## PORTFOLIO ## #
@@ -43,11 +54,11 @@ class BlogPostForm(FlaskForm):
     post_body = TextAreaField('Post body', validators=[
         DataRequired(), Length(min=1, max=1000)])
     category = SelectField('Category')
-    photo = FileField('Post photo', validators=[FileRequired(),
+    photo = FileField('Post photo', validators=[
                       FileAllowed(images, 'Only images allowed.')])
     photo_alt_text = TextField('Photo alt-text', validators=[DataRequired(),
                                Length(min=1, max=140)])
-    submit = SubmitField('Submit post')
+    submit = SubmitField('Submit')
 
 
 # Add new blog tags

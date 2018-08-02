@@ -8,13 +8,13 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="{{ url_for('admin') }}">
-            admin.{{ request.endpoint }}</a>
+            <span class="fa fa-flask"></span></a>
         </div>
 
         <div class="collapse navbar-collapse"
             id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('admin') }}">Edit Home Page</a></li>
+                <li><a href="{{ url_for('edit_homepage') }}">Edit Home Page</a></li>
                 <li><a href="{{ url_for('edit_portfolio') }}">Edit Portfolio</a></li>
                 <li><a href="{{ url_for('manage_blog') }}">Manage Blog</a></li>
             </ul>

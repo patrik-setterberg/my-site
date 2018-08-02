@@ -1,8 +1,9 @@
 from app import app, db, images
 from app.forms import LoginForm, BlogPostForm, BlogCommentForm, DeletePostForm
 from app.forms import AddCategoryForm, EditScoreForm, ProjectForm
+from app.forms import EditHomePageForm
 from app.models import User, BlogPost, BlogComment, BlogCategory
-from app.models import PortfProject
+from app.models import PortfProject, HomePageContent
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -15,7 +16,11 @@ from werkzeug.urls import url_parse
 @app.route('/index', methods=['GET', 'POST'])
 def index():
 
-    return render_template('index.html')
+    page_content = HomePageContent.query.first_or_404()
+    page_content.text_body = markdown.markdown(page_content.text_body)
+
+    return render_template('index.html', title='Welcome!',
+                           page_content=page_content)
 
 
 # Login route
@@ -62,12 +67,53 @@ def admin():
     return render_template('admin.html', title='Secret Area')
 
 
+# edit homepage
+@app.route('/admin/edit_homepage', methods=['GET', 'POST'])
+@login_required
+def edit_homepage():
+
+    form = EditHomePageForm()
+
+    page_content = HomePageContent.query.first_or_404()
+
+    if form.validate_on_submit() and form.submit.data:
+
+        if page_content is None:
+
+            new_presentation = (HomePageContent(
+                                title=form.title.data,
+                                text_body=form.text_body.data))
+
+            db.session.add(new_presentation)
+            db.session.commit()
+
+        else:
+
+            page_content.title = form.title.data
+            page_content.text_body = form.text_body.data
+
+            db.session.commit()
+
+        return redirect(url_for('index'))
+
+    if request.method == 'GET' and page_content:
+
+            form.title.data = page_content.title
+            form.text_body.data = page_content.text_body
+
+    return render_template('edit_homepage.html', title='Edit Homepage',
+                           form=form, page_content=page_content)
+
+
 # ## PORTFOLIO ## #
 
 @app.route('/portfolio', methods=['GET'])
 def portfolio():
 
     projects = PortfProject.query.order_by(PortfProject.id.desc())
+
+    for project in projects:
+        project.description = markdown.markdown(project.description)
 
     return render_template('portfolio.html', projects=projects)
 
@@ -164,6 +210,8 @@ def delete_project(project_id):
 
         flash('Project deleted successfully.')
         return redirect(url_for('edit_portfolio'))
+
+    project.description = markdown.markdown(project.description)
 
     return render_template('delete_project.html', form=form, project=project)
 
@@ -292,6 +340,10 @@ def manage_blog():
     # Publish new blog post
     if form.validate_on_submit() and form.submit.data:
 
+        if 'photo' not in request.files:
+            flash('Post requires a photo.')
+            return redirect(url_for('manage_blog'))
+
         filename = images.save(request.files['photo'],
                                folder="blog_photos/")
 
@@ -309,6 +361,12 @@ def manage_blog():
 
     post_count = BlogPost.query.count()
     comments_count = BlogComment.query.count()
+    most_pop = BlogPost.query.order_by(BlogPost.post_score
+                                       .desc()).first_or_404()
+    latest = BlogComment.query.order_by(BlogComment.timestamp
+                                        .desc()).first_or_404()
+    latest_comment_post = (BlogPost.query.filter_by(id=latest.post_id)
+                           .first_or_404())
 
     page = request.args.get('page', 1, type=int)
     posts = BlogPost.query.order_by(BlogPost.timestamp.desc()).paginate(
@@ -321,7 +379,9 @@ def manage_blog():
     return render_template('manage_blog.html', title='Manage Blog',
                            form=form, posts=posts.items, next_url=next_url,
                            prev_url=prev_url, post_count=post_count,
-                           comments_count=comments_count)
+                           comments_count=comments_count,
+                           most_pop=most_pop, latest=latest,
+                           latest_comment_post=latest_comment_post.title)
 
 
 # edit blog post
@@ -342,6 +402,12 @@ def edit_blog_post(post_id):
         post.body = form.post_body.data
         post.last_edit = datetime.utcnow()
         post.category = form.category.data
+
+        if 'photo' in request.files:
+            filename = images.save(request.files['photo'],
+                                   folder="blog_photos/")
+            post.photo_filename = filename
+
         db.session.commit()
 
         flash('Changes saved.')

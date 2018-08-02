@@ -26,6 +26,16 @@ def load_user(id):
     return User.query.get(int(id))
 
 
+# ## Homepage ## #
+class HomePageContent(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    text_body = db.Column(db.String(5000))
+
+    def __repr__(self):
+        return '<Presentation {}>'.format(self.title)
+
+
 # ## Portfolio ## #
 class PortfProject(db.Model):
     id = db.Column(db.Integer, primary_key=True)

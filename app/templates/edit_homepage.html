@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+
+    <div class="col-md-6">
+        <h4>Edit home page content and hit save changes.</h4>
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+            {{ wtf.form_errors(form, hiddens="only") }}
+
+            {{ wtf.form_field(form.title) }}
+            {{ wtf.form_field(form.text_body, rows=8) }}
+
+            {# PROBABLY MORE FIELDS #}
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
+    <div class="col-md-6">
+        {% include "_blognotes.html" %}
+    </div>
+</div>
+{% endblock %}

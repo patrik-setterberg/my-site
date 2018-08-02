@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-
 {% if projects %}
     {% for project in projects %}
         {% include "_project.html" %}
@@ -12,5 +11,4 @@
         No projects added yet.
     </p>
 {% endif %}
-
 {% endblock %}

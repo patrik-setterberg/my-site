@@ -11,9 +11,11 @@
             {{ wtf.form_errors(form, hiddens="only") }}
 
             {{ wtf.form_field(form.name) }}
-            {{ wtf.form_field(form.description, rows=6) }}
+            {{ wtf.form_field(form.description, rows=8) }}
             {{ wtf.form_field(form.url) }}
             {{ wtf.form_field(form.link_text) }}
+            <p>Current image: <strong>{{ project.cover_img_filename }}</strong></p>
+            <p>Do you wish to upload a new cover image?</p>
             {{ wtf.form_field(form.cover_img) }}
             {{ wtf.form_field(form.cover_img_alt_txt) }}
             {{ wtf.form_field(form.submit) }}

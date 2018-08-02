@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h3>Welcome to my_site!</h3>
-<p>Stay awhile and listen...</p>
+<h3>{{ page_content.title}}</h3>
+{{ page_content.text_body|safe }}
 {% endblock %}
