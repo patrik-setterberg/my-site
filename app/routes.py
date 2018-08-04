@@ -9,6 +9,7 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 import markdown
 from werkzeug.urls import url_parse
+from werkzeug.utils import secure_filename
 
 
 # Home
@@ -131,7 +132,9 @@ def edit_portfolio():
             flash('Project requires a cover photo.')
             return redirect(url_for('edit_portfolio'))
 
-        filename = images.save(request.files['cover_img'], folder="portfolio/")
+        file = request.files['cover_img']
+        filename = secure_filename(file.filename)
+        saved = images.save(file, folder="portfolio/")
 
         new_project = (PortfProject(
                        name=form.name.data,
@@ -144,6 +147,8 @@ def edit_portfolio():
         db.session.add(new_project)
         db.session.commit()
 
+        if saved:
+            flash('New project now live!')
         return redirect(url_for('portfolio'))
 
     projects = PortfProject.query.order_by(PortfProject.id.desc())
@@ -174,14 +179,18 @@ def edit_project(project_id):
 
             # DELETE OLD FILE???
 
-            filename = images.save(request.files['cover_img'],
-                                   folder="portfolio/")
+            file = request.files['cover_img']
+            filename = secure_filename(file.filename)
+            saved = images.save(file, folder="portfolio/")
 
             project.cover_img_filename = filename
 
         db.session.commit()
 
-        flash('Changes saved.')
+        if saved:
+            flash('Changes saved and new image uploaded!')
+        else:
+            flash('Changes saved.')
         return redirect(url_for('edit_portfolio'))
 
     elif request.method == 'GET':
@@ -344,8 +353,9 @@ def manage_blog():
             flash('Post requires a photo.')
             return redirect(url_for('manage_blog'))
 
-        filename = images.save(request.files['photo'],
-                               folder="blog_photos/")
+        file = request.files['photo']
+        filename = secure_filename(file.filename)
+        saved = images.save(request.files['photo'], folder="blog_photos/")
 
         post = BlogPost(title=form.post_title.data,
                         body=form.post_body.data,
@@ -356,7 +366,8 @@ def manage_blog():
         db.session.add(post)
         db.session.commit()
 
-        flash('Post is now live!')
+        if saved:
+            flash('Post is now live!')
         return redirect(url_for('blog'))
 
     post_count = BlogPost.query.count()
@@ -404,8 +415,10 @@ def edit_blog_post(post_id):
         post.category = form.category.data
 
         if 'photo' in request.files:
-            filename = images.save(request.files['photo'],
-                                   folder="blog_photos/")
+
+            file = request.files['photo']
+            filename = secure_filename(file.filename)
+            images.save(request.files['photo'], folder="blog_photos/")
             post.photo_filename = filename
 
         db.session.commit()

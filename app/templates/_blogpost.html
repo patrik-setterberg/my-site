@@ -15,7 +15,7 @@
                         {% endif %}
                     </p>
                     {% if post.photo_filename %}
-                        <img src="{{ url_for('static', filename='img/blog_photos/' + post.photo_filename) }}" alt="{{ post.photo_alt_text }}">
+                        <img src="{{ url_for('static', filename='img/blog_photos/' + post.photo_filename) }}" class="post_image" alt="{{ post.photo_alt_text }}">
                     {% endif %}
                     <p style="white-space: pre-wrap;">{{ post.body|safe }}</p>
                 </div>

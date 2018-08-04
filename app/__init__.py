@@ -46,11 +46,11 @@ if not app.debug:
     #     app.logger.addhandler(mail_handler)
 
     # make sure photos folder exists
-    if not os.path.exists('static/img/blog_photos'):
-        os.mkdir('static/img/blog_photos')
+    if not os.path.exists('app/static/img/blog_photos'):
+        os.mkdir('app/static/img/blog_photos')
 
-    if not os.path.exists('static/img/portfolio'):
-        os.mkdir('static/img/portfolio')
+    if not os.path.exists('app/static/img/portfolio'):
+        os.mkdir('app/static/img/portfolio')
 
     # logging to file
     if not os.path.exists('logs'):

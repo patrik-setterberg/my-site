@@ -6,7 +6,7 @@ class Config(object):
 
     # DEBUG = True
 
-    UPLOADED_IMAGES_DEST = os.path.join(basedir, 'static/img/')
+    UPLOADED_IMAGES_DEST = os.path.join(basedir, 'app/static/img/')
     UPLOADED_IMAGES_URL = 'http://localhost:5000/static/img/'
 
     # secret key protects against CSRF-attacks

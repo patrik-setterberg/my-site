@@ -12,6 +12,9 @@
                 - Edited: {{ post.last_edit.strftime("%Y-%m-%d") }}
             {% endif %}
         </p>
+        {% if post.photo_filename %}
+            <img class="post_image" src="{{ url_for('static', filename='img/blog_photos/' + post.photo_filename) }}" alt="{{ post.photo_alt_text }}">
+        {% endif %}
         <p style="white-space: pre-wrap;">{{ post.body|safe }}</p>
     </div>
     <p style="float:right;">Post approval: <strong>{{ post.post_score }}</strong> <span class="glyphicon glyphicon-thumbs-up"></span> - <a href="{{ url_for('approve', post_id=post.id, url=request.url) }}">Click to <span class="fa fa-arrow-circle-up"></span></a></p>

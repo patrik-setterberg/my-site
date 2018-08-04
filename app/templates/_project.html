@@ -1,8 +1,9 @@
 <div class="row">
     <div class="col-md-12">
-        <img src="/static/img/{{ project.cover_img_filename }}" alt="{{ project.cover_img_alt_txt }}">
-        <h3>{{ project.name }}</h3>
-        <p><a href="{{ project.url }}">{{ project.link_text }}</a></p>
+        <h3><span class="fa fa-code"></span> {{ project.name }}</h3>
+        <img src="{{ url_for('static', filename=('img/portfolio/' + project.cover_img_filename)) }}" class="post_image" alt="{{ project.cover_img_alt_txt }}">
+        <br><br>
+        <p>Project URL: <a href="{{ project.url }}">{{ project.link_text }}</a></p>
         <h4>Project description</h4>
         <p style="white-space: pre-wrap;">{{ project.description|safe }}</p>
     </div>
